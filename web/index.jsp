@@ -39,9 +39,9 @@
     <body>
         <% 
         Class.forName("org.postgresql.Driver", true, getClass().getClassLoader());
-        DBManager manager = new DBManager( "jdbc:postgresql://localhost:5432/postgres","postgres","postgres");
+        DBManager manager = new DBManager( "jdbc:postgresql://localhost:5432/DBFoodSite","postgres","000117gm");
          manager = (DBManager)super.getServletContext().getAttribute("dbmanager");
-        java.sql.Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres","postgres","postgres");
+        java.sql.Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/DBFoodSite","postgres","000117gm");
         Statement st = con.createStatement();
         ResultSet rs = st.executeQuery("SELECT * FROM COORDINATES");
         ArrayList<Double> latx = new ArrayList();
