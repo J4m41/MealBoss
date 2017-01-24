@@ -173,7 +173,7 @@ ID_PHOTO INTEGER,
 
 VALIDATED INTEGER DEFAULT 0,
 
-LIKES INTEGER,
+LIKES INTEGER DEFAULT 0,
 
 PRIMARY KEY (ID),
 
@@ -195,9 +195,19 @@ DATE_CREATION TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 ID_REVIEW INTEGER NOT NULL,
 
+ID_OWNER INTEGER ,
+
+DATE_VALIDATION TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+ID_VALIDATOR INTEGER ,
+
 PRIMARY KEY (ID),
 
-FOREIGN KEY (ID_REVIEW) REFERENCES REVIEWS (ID)
+FOREIGN KEY (ID_REVIEW) REFERENCES REVIEWS (ID),
+
+FOREIGN KEY (ID_OWNER) REFERENCES USERS (ID),
+
+FOREIGN KEY (ID_VALIDATOR) REFERENCES USERS (ID)
 
 );
 
@@ -228,8 +238,8 @@ VALUES(1, 46.06941967, 11.12015963, 'Via Roma 3'),
 (3, 46.06483428, 11.12334609, 'Via S.Croce 8');
 
 INSERT INTO RESTAURANTS
-VALUES(1, 'Bella Napoli', 'Viale Verona', '5', 'Trento', 'Pizza napoletana di qualità con cottura a legna', 'www.pizzanapoli.it',4,2,4,4),
-(2, 'Cinese Party', 'Corso 3 Novembre', '23', 'Trento', 'Cucina cinese cucinata da un vero chef cinese qualificato alla scuola più difficile di Pechino', 'www.cineseparty.com',3,2,5,5);
+VALUES(1, 'Bella Napoli', 'Viale Verona', '5', 'Trento', 'Pizza napoletana di qualitÃ  con cottura a legna', 'www.pizzanapoli.it',4,2,4,4),
+(2, 'Cinese Party', 'Corso 3 Novembre', '23', 'Trento', 'Cucina cinese cucinata da un vero chef cinese qualificato alla scuola piÃ¹ difficile di Pechino', 'www.cineseparty.com',3,2,5,5);
 
 INSERT INTO OPENING_HOURS_RESTAURANTS
 VALUES(1, 6, '9:00:00', '14:30:00','17:00:00', '00:30:00'),
@@ -241,6 +251,8 @@ INSERT INTO RESTAURANT_CUISINE
 VALUES(1,1),
 (2,3);
 
+INSERT INTO REVIEWS
+VALUES(1,'Non male', 3, 'Non era male, ma materia prima scadente','2016-05-23 21:15:25',1,2,1,0,0);
 
 INSERT INTO REPLIES
 VALUES(1, 'LA TUA PIZZA FA CAGARISSIMO, NON CAGARE', '2016-05-23 21:15:25',1,4,'2016-05-23 21:35:45',1);
