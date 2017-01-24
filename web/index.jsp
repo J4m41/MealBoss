@@ -12,7 +12,9 @@
         <%@page import="db_classes.User" %>
         <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script src="media/js/jquery-3.1.1.min.js"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="media/js/jquery-3.1.1.js"></script>
+        <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js" integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30=" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
             integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">        
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" 
@@ -59,7 +61,7 @@
             <div class="col-md-8">
                 <form action="ShowResults" type="post">
                     <div class="input-group" id="barra-ricerca">
-                        <input type="text" id="search_bar" autocomplete="true" name="search_bar" class="form-control ui-front" placeholder="Search">
+                        <input type="text" id="search_bar" name="search_bar" class="form-control" placeholder="Search">
 
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
@@ -87,8 +89,7 @@
                 <h1>The best way to eat</h1>
             </div>
         
-  
-        
+
         <script src="media/js/scripts.js"></script>
     </body>
 </html>
