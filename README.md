@@ -10,6 +10,6 @@ Per clonare il progetto consiglio di:
 4) git pull 'nome-repo_da_pullare' 'nome-branch_da_pullare'.
 
 Consiglio prima, però, di forkare da GitHub la mia e poi pullare dalla vostra così non ci sono problemi poi per pushare.
-Altrimenti per poi pushare su GitHub serve fare Pull Request.
+Altrimenti per poi pushare su GitHub serve fare Pull Request e devo aggiungervi come collaboratori (si può fare ma è delicato e ognuno dovrebbe eseguire i suoi update sul proprio branch)!
 
 N.B: Sarà necessario cambiare dati di accesso al DB nel web.xml file.
