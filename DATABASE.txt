@@ -252,7 +252,7 @@ VALUES(1,1),
 (2,3);
 
 INSERT INTO REVIEWS
-VALUES(1,"Non male", 3, "Non era male, ma materia prima scadente",'2016-05-23 21:15:25',1,2,1,0,0);
+VALUES(1,'Non male', 3, 'Non era male, ma materia prima scadente','2016-05-23 21:15:25',1,2,1,0,0);
 
 INSERT INTO REPLIES
 VALUES(1, 'LA TUA PIZZA FA CAGARISSIMO, NON CAGARE', '2016-05-23 21:15:25',1,4,'2016-05-23 21:35:45',1);
