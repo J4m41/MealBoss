@@ -3,7 +3,12 @@
     Created on : 26-set-2016, 13.05.16
     Author     : leonardo
 --%>
-
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.Statement"%>
+<%@page import="db_classes.DBManager"%>
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.util.ArrayList"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,10 +24,50 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="media/js/autoCompelte.js"></script>
-        
+     <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
     </head>
     <body>
-        
+        <% 
+        Class.forName("org.postgresql.Driver", true, getClass().getClassLoader());
+        DBManager manager = new DBManager( "jdbc:postgresql://localhost:5432/postgres","postgres","postgres");
+         manager = (DBManager)super.getServletContext().getAttribute("dbmanager");
+        java.sql.Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres","postgres","postgres");
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery("SELECT * FROM COORDINATES");
+        ArrayList<Double> latx = new ArrayList();
+        ArrayList<Double> longx = new ArrayList();
+        int dim = 0;
+        while (rs.next()) {
+         Double latz = rs.getDouble("latitude");
+         Double longz = rs.getDouble("longitude");
+         latx.add(latz);
+         longx.add(longz);
+         dim++;
+         }
+        rs = st.executeQuery("SELECT * FROM RESTAURANTS");
+        ArrayList<String> nomi = new ArrayList();
+        ArrayList<String> desc = new ArrayList();
+        ArrayList<String> url = new ArrayList();
+        while(rs.next()){
+            String nome = rs.getString("name");
+            String descx = rs.getString("description");
+            String urlx = rs.getString("web_site_url");
+            nomi.add(nome);
+            desc.add(descx);
+            url.add(urlx);
+        }
+        session.setAttribute("latx", latx);
+        session.setAttribute("longx", longx);
+        session.setAttribute("dim", dim);
+        session.setAttribute("nomi", nomi);
+        session.setAttribute("desc", desc);
+        session.setAttribute("url", url);
+        %>
         <nav id="nav-lato">
             <c:if test="${sessionScope.user == null}">
                 <ul class="menu">
@@ -85,6 +130,77 @@
             <div class="jumbotron" >
                 <h1>The best way to eat</h1>
             </div>
+        <div id="map"></div>
+         <script type="text/javascript" src="https://www.google.com/jsapi"></script>  
+         
+    <script>
+        function getCoords(geocoder, address)
+        {
+         alert("ENTRATI2");
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            alert("POS: " + results[0].geometry.location);
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+        }
+    
+       function initMap() {
+        var address = "104 Via della Cervara TN Italy, 38121";
+        var geocoder = new google.maps.Geocoder();
+        getCoords(geocoder,address);
+        var desc = [
+        <c:forEach var="p" items="${sessionScope.desc}" varStatus="status">
+          ${status.first ? '' : ','} "${p}"
+           </c:forEach>
+        ];
+        var url = [
+        <c:forEach var="p" items="${sessionScope.url}" varStatus="status">
+          ${status.first ? '' : ','} "${p}"
+           </c:forEach>
+        ];
+        var latt = [
+        <c:forEach var="p" items="${sessionScope.latx}" varStatus="status">
+          ${status.first ? '' : ','} "${p}"
+           </c:forEach>
+        ];
+        var logg = [
+        <c:forEach var="p" items="${sessionScope.longx}" varStatus="status">
+          ${status.first ? '' : ','} "${p}"
+           </c:forEach>
+        ];
+        var dim = '<%=dim%>';
+        //pos utente !! MANCANTE !!
+        var posx = {lat: 46.06941967  , lng: 11.12015963};
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: posx,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+         
+     var infowindow = new google.maps.InfoWindow();
+     
+     for(var i=0; i<dim; i++) { 
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(latt[i], logg[i]),
+        map: map
+      });
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+  
+          infowindow.setContent(desc[i] + "\n" + url[i]);
+          infowindow.open(map, marker);
+         };
+      })(marker, i));
+    }
+         
+        
+    }
+    
+    </script>
+          <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLIV2YvvxU-PmpT9MBrApqPx8oDmqcpXs&callback=initMap"></script>
         
   
         <script src="media/js/jquery-3.1.1.min.js"></script>
