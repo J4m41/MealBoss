@@ -8,9 +8,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src="media/js/jquery-3.1.1.min.js"></script>
-        <script src="media/js/scripts.js"></script>
-    <%@include file="header.jsp" %>
+        
+        <jsp:include page="header.jsp"></jsp:include>
         
     <div class="col-md-2"></div>
     <div class="col-md-10">
@@ -582,5 +581,6 @@
         </div>
         <div class="col-md-2"></div>
     </div>
+    <script src="media/js/scripts.js"></script>
     </body>
 </html>
