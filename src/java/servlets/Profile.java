@@ -40,6 +40,7 @@ public class Profile extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
@@ -52,10 +53,7 @@ public class Profile extends HttpServlet {
         String restName = new String();
         restName = tmp.replaceAll("_", " ");
                 
-        out.println("<html><head><title>"+restName+"</title>"
-                + "<link rel=\"stylesheet\" href=\"media/css/styles.css\">");
-        out.println("<script src=\"media/js/jquery-3.1.1.min.js\"></script>\n" +
-"        <script src=\"media/js/scripts.js\"></script>");
+        out.println("<html><head><title>"+restName+"</title>");
         request.getRequestDispatcher("header.jsp").include(request, response);
         
         Restaurant res_tmp = new Restaurant();
@@ -124,7 +122,10 @@ public class Profile extends HttpServlet {
         
         
         
-        out.println("</div></body></html>");
+        out.println("</div>"
+                + "<script src=\"media/js/jquery-3.1.1.min.js\"></script>"
+                + "<script src=\"media/js/scripts.js\"></script>"
+                + "</body></html>");
         
     }
 

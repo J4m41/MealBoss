@@ -7,11 +7,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="media/css/styles.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="media/js/autoCompelte.js"></script>
-        
+        <script src="media/js/scripts.js"></script>
     </head>
     <body>
         <nav id="nav-lato">
@@ -72,8 +72,3 @@
             <div class="col-md-2"></div>
             
         </nav>
-        
-        <script src="media/js/jquery-3.1.1.min.js"></script>
-        <script src="media/js/scripts.js"></script>
-                
-        

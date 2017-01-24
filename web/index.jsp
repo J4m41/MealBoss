@@ -7,7 +7,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <head>
         <%!User userin; %>
         <%!String fullname; %>
         <%@page import="db_classes.User" %>
@@ -15,11 +14,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="media/css/styles.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="media/js/autoCompelte.js"></script>
-        
     </head>
     <body>
         
@@ -58,7 +56,7 @@
             <div class="col-md-8">
                 <form action="ShowResults" type="post">
                     <div class="input-group" id="barra-ricerca">
-                        <input type="text" id="search_bar" name="search_bar" class="form-control" placeholder="Search">
+                        <input type="text" id="search_bar" autocomplete="true" name="search_bar" class="form-control" placeholder="Search">
 
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
@@ -87,8 +85,8 @@
             </div>
         
   
-        <script src="media/js/jquery-3.1.1.min.js"></script>
+        
+        <!--<script src="media/js/jquery-3.1.1.min.js"></script>-->
         <script src="media/js/scripts.js"></script>
-
     </body>
 </html>
