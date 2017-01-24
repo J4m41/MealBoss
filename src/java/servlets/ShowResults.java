@@ -78,7 +78,6 @@ public class ShowResults extends HttpServlet {
             }
             
             out.println("</table></form></div><div class=\"col-md-2\"></div>"
-                    +"<script src=\"media/js/jquery-3.1.1.min.js\"></script>"
                     +"<script src=\"media/js/scripts.js\"></script>"
                     + "</body></html>");
         } catch (SQLException ex) {

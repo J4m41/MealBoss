@@ -6,5 +6,5 @@ var names = ["Ristorante1","Ristorante2","Ristorante3"];
 
 $('#search_bar').autocomplete({
     source: names,
-    minLength: 2
+    minLength: 1
 });

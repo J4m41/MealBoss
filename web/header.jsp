@@ -11,7 +11,6 @@
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="media/js/scripts.js"></script>
     </head>
     <body>
         <nav id="nav-lato">
@@ -49,7 +48,7 @@
             <div class="col-md-8">
                 <form action="ShowResults" type="post">
                     <div class="input-group" id="barra-ricerca">
-                        <input type="text" id="search_bar" name="search_bar" class="form-control" placeholder="Search">
+                        <input type="text" id="search_bar" name="search_bar" autocomplete="true" class="form-control" placeholder="Search">
 
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"

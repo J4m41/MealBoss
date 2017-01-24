@@ -123,7 +123,6 @@ public class Profile extends HttpServlet {
         
         
         out.println("</div>"
-                + "<script src=\"media/js/jquery-3.1.1.min.js\"></script>"
                 + "<script src=\"media/js/scripts.js\"></script>"
                 + "</body></html>");
         
