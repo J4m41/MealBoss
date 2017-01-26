@@ -1,3 +1,7 @@
 {
-    "names": ["Ristorante1","Ristorante2","Ristorante3"]
+    "names": ["Bella Napoli", "Cinese Party", "Samir Kebab"],
+    "places": ["Trento"],
+    "cuisineTypes": ["Italiana", "Asiatica", "Nord Americana", "Africana", "Caraibica",
+        "Sud Americana", "Nord Europea", "Mediterranea", "Medio Orientale", "Vegana",
+        "Fast Food", "Pizzeria"]
 }

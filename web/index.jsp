@@ -102,7 +102,7 @@
         
         <nav class="navbar navbar-custom navbar-fixed-top">
             
-            <div class="col-md-2">
+            <div class="col-md-2 col-sm-1 col-xs-2">
                 <div id="mobile-nav"></div>
             </div>
             <div class="col-md-8">
@@ -112,11 +112,11 @@
 
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">Advanced <span class="caret"></span></button>
+                                    aria-haspopup="true" aria-expanded="false">Search by <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
+                                <li><a><input type="checkbox" checked="true" id="search_names"> Names</a></li>
+                                <li><a><input type="checkbox" id="search_places"> Places</a></li>
+                                <li><a><input type="checkbox" id="search_cuisines"> Cuisine types</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#">Separated link</a></li>
                             </ul>
@@ -137,7 +137,7 @@
             </div>
         <div id="map"></div>
          <script type="text/javascript" src="https://www.google.com/jsapi"></script>  
-         
+     <!--    
     <script>
         function getCoords(geocoder, address)
         {
@@ -206,7 +206,7 @@
     
     </script>
           <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLIV2YvvxU-PmpT9MBrApqPx8oDmqcpXs&callback=initMap"></script>
-        
+        -->
 
         <script src="media/js/scripts.js"></script>
     </body>
