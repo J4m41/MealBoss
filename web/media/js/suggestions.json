@@ -1,7 +1,32 @@
 {
-    "names": ["Bella Napoli", "Cinese Party", "Samir Kebab"],
-    "places": ["Trento"],
     "cuisineTypes": ["Italiana", "Asiatica", "Nord Americana", "Africana", "Caraibica",
         "Sud Americana", "Nord Europea", "Mediterranea", "Medio Orientale", "Vegana",
-        "Fast Food", "Pizzeria"]
+        "Fast Food", "Pizzeria"],
+    
+    "restaurants": [
+        {
+            "name": "Bella Napoli",
+            "place": "Trento",
+            "coords": {
+                "lat": 46.06941967,
+                "lng": 11.12015963
+            }
+        },
+        {
+            "name": "Cinese Party",
+            "place": "Trento",
+            "coords": {
+                "lat": 46.06657618,
+                "lng": 11.11823916
+            }
+        },
+        {
+            "name": "Samir Kebab",
+            "place": "Trento",
+            "coords": {
+                "lat": 46.06483428,
+                "lng": 11.12334609
+            }
+        }
+    ]
 }

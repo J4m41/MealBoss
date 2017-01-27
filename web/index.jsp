@@ -27,14 +27,8 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="media/css/styles.css">
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            #map {
-                height: 400px;
-                width: 100%;
-            }
-        </style>
-    
     </head>
     <body>
         <% 
@@ -131,13 +125,13 @@
             <div class="col-md-2"></div>
             
         </nav>
-        <img id="bg_image" src="media/images/home_restaurant.jpg">
             <div class="jumbotron" >
                 <h1>The best way to eat</h1>
+                <img id="bg_image" src="media/images/home_restaurant.jpg">
             </div>
-        <div id="map"></div>
-         <script type="text/javascript" src="https://www.google.com/jsapi"></script>  
-     <!--    
+        <div id="map-div"></div>
+          
+   <!--
     <script>
         function getCoords(geocoder, address)
         {
@@ -205,8 +199,8 @@
     }
     
     </script>
-          <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLIV2YvvxU-PmpT9MBrApqPx8oDmqcpXs&callback=initMap"></script>
-        -->
+    -->
+        <script async defer type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLIV2YvvxU-PmpT9MBrApqPx8oDmqcpXs&callback=initMap"></script>
 
         <script src="media/js/scripts.js"></script>
     </body>

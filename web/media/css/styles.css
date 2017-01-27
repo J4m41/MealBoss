@@ -84,11 +84,14 @@ body{
     height:400px;
     top:0px;
 }
+
 #profile-res-title{
-    
     text-align: right;
-    
-    
+}
+
+#map-div{
+    height: 400px;
+    width: 100%;
 }
 
 .acidjs-rating-stars,
