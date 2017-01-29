@@ -38,64 +38,54 @@ var map;
 
 function initializeMap() {
 
-    var locations;
+    
 
     var mapOptions = {
-      disableDefaultUI: true
+        center: new google.maps.LatLng(46.057, 11.112),
+        zoom: 12,
+        disableDefaultUI: true
     };
 
 
-    map = new google.maps.Map(document.querySelector('#map'), mapOptions);
-
-    function locationFinder() {
-
-        // initializes an empty array
-        var locations = [];
-        var names = [];
-
-        $.getJSON("http://localhost:8080/MealBoss/media/js/suggestions.json", function(data) {
-            for (var i = 0; i < data.restaurants.length; i++){
-                locations.push(data.restaurants.coords);
-                names.push(data.restaurants.name);
-            }
-        });
-
-        return locations;
-    }
+    map = new google.maps.Map(document.querySelector('#map-div'), mapOptions);
     
-    function addMarkers(locations, names){
-        
-        var infowindow = new google.maps.InfoWindow();
-        
-        for(var i=0; i<locations.length; i++) {
+    var infowindow = new google.maps.InfoWindow();
+    
+    $.getJSON("http://localhost:8080/MealBoss/media/js/suggestions.json", function(data) {
+        $.each(data.restaurants, function(key, val) {
             
-            var marker = new google.maps.Marker({
-                position: new google.maps.LatLng(locations.lat, locations.lng),
-                map: map
+            var name = val.name;
+            
+            $.each(val, function(key, val){
+            
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(val.lat, val.lng),
+                    map: map
+                });
+                    
+                google.maps.event.addListener(marker, 'click', (function(marker,name) {
+                    return function() {
+                        infowindow.setContent(name);
+                        infowindow.open(map, marker);
+                    };
+                })(marker, name));
+                    
             });
-            
-            google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                return function() {
-                    infowindow.setContent(names[i]);
-                    infowindow.open(map, marker);
-                };
-            })(marker, i));
-        }
-    }
+                
+        });
+    });
+    
     
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
 
-    // locations is an array of location strings returned from locationFinder()
-    locations = locationFinder();
 
     // pinPoster(locations) creates pins on the map for each location in
     // the locations array
-    addMarkers(locations);
 }
 
 // Calls the initializeMap() function when the page loads
-window.addEventListener('load', initializeMap);
+//window.addEventListener('load', initializeMap);
 
 // Vanilla JS way to listen for resizing of the window
 // and adjust map bounds

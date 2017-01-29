@@ -8,24 +8,24 @@
             "name": "Bella Napoli",
             "place": "Trento",
             "coords": {
-                "lat": 46.06941967,
-                "lng": 11.12015963
+                "lat": 46.069419,
+                "lng": 11.120159
             }
         },
         {
             "name": "Cinese Party",
             "place": "Trento",
             "coords": {
-                "lat": 46.06657618,
-                "lng": 11.11823916
+                "lat": 46.066576,
+                "lng": 11.118239
             }
         },
         {
             "name": "Samir Kebab",
             "place": "Trento",
             "coords": {
-                "lat": 46.06483428,
-                "lng": 11.12334609
+                "lat": 46.064834,
+                "lng": 11.123346
             }
         }
     ]

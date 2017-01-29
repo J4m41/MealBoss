@@ -44,7 +44,7 @@
         <servlet-class>servlets.AddRestaurant</servlet-class>
         <init-param>
             <param-name>uploadDir</param-name>
-            <param-value>/home/gianma/NetBeansProjects/TestGit/progWeb420/web/media/images</param-value>
+            <param-value>/home/gianma/NetBeansProjects/MealBoss/web/media/images</param-value>
         </init-param>
     </servlet>
     <servlet>
@@ -96,4 +96,5 @@
             30
         </session-timeout>
     </session-config>
+    <!--  AIzaSyDORr3b9qWZfsw4Scy6BFUpkk1EXgw_DJw  -->
 </web-app>

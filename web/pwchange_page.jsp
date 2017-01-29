@@ -61,8 +61,6 @@
     <% String token = request.getParameter("token"); %>
     
     <body>
-        <script src="media/js/jquery-3.1.1.min.js"></script>
-        <script src="media/js/scripts.js"></script>
         <nav id="nav-lato">
             <c:if test="${sessionScope.user == null}">
                 <ul class="menu">
@@ -92,7 +90,7 @@
         
         <nav class="navbar navbar-custom navbar-fixed-top">
             
-            <div class="col-md-2">
+            <div class="col-md-2 col-sm-1 col-xs-2">
                 <div id="mobile-nav"></div>
             </div>
             <div class="col-md-8">
@@ -102,13 +100,11 @@
 
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">Advanced <span class="caret"></span></button>
+                                    aria-haspopup="true" aria-expanded="false">Search by <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a href="#">Action</a></li>
-                                <li><a href="#">Another action</a></li>
-                                <li><a href="#">Something else here</a></li>
-                                <li role="separator" class="divider"></li>
-                                <li><a href="#">Separated link</a></li>
+                                <li><a><input type="checkbox" checked="true" id="search_names"> Names</a></li>
+                                <li><a><input type="checkbox" id="search_places"> Places</a></li>
+                                <li><a><input type="checkbox" id="search_cuisines"> Cuisine types</a></li>
                             </ul>
                         </div>
 
@@ -127,7 +123,7 @@
             <div class="col-md-4"></div>
             <div class="col-md-4">
                 <div class="container-fluid">
-                    <div class="panel panel-primary">
+                    <div class="panel panel-danger">
                         <div class="panel-heading">
                             <h3 class="panel-heading">Password Reset</h3>
                         </div>
@@ -162,7 +158,7 @@
                                     <br>
                                     <div class="form-group">
                                         <div class="row">
-                                            <button class="btn btn-primary" type="submit">Submit</button>
+                                            <button class="btn btn-danger" type="submit">Submit</button>
                                         </div>
                                     </div>
                                 </div>
@@ -174,9 +170,7 @@
             <div class="col-md-4"></div>
         </div>
         
-        
-        
-        <script src="media/js/jquery-3.1.1.min.js"></script>
+
         <script src="media/js/scripts.js"></script>
 
     </body>

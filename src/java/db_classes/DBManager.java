@@ -14,8 +14,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 import info.debatty.java.stringsimilarity.*;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.logging.Level;
+import org.apache.commons.io.IOUtils;
+import org.json.*;
 
 /**
  *
@@ -554,11 +560,11 @@ public class DBManager implements Serializable {
             psk.close();
             psw.close();
             
-            
+            //query to insert coordinates
             double [] coordinates = null;
             try {
                 coordinates = getCoordinates(restaurant.getAddress(), restaurant.getCivicNumber(), restaurant.getCity());
-            } catch (IOException ex) {
+            } catch (IOException | JSONException ex) {
                 Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
             }
             
@@ -606,13 +612,29 @@ public class DBManager implements Serializable {
      * @param city
      * @return
      * @throws java.io.IOException
+     * @throws org.json.JSONException
      */
-    public double[] getCoordinates(String address, int civic, String city) throws IOException{
-        String url1 = "http://maps.googleapis.com/maps/api/geocode/json";
+    public double[] getCoordinates(String address, int civic, String city) throws IOException, JSONException{
+        String url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+        String apikey = "&key=AIzaSyDORr3b9qWZfsw4Scy6BFUpkk1EXgw_DJw";
         double [] coordinates = new double [2];
         String fulladdress = address+" "+civic+" "+city;
         
+        URL url = new URL(url1 + URLEncoder.encode(fulladdress, "UTF-8") + apikey + "&sensor=false");
+        URLConnection conn = url.openConnection();
         
+        ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
+        IOUtils.copy(conn.getInputStream(), output);
+        
+        String json = output.toString();
+        
+        JSONObject obj = new JSONObject(json);
+        
+        String latitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getString("lat");
+        String longitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getString("lng");
+        
+        coordinates[0] = Float.parseFloat(latitude);
+        coordinates[1] = Float.parseFloat(longitude);
         
         return coordinates;
     }

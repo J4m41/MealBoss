@@ -32,16 +32,8 @@
   transition: all .5s;
 }
 
-#bg_image{
-    top:0px;
-    height:auto;
-    width: 100%;
-    position: absolute;
-}
-
 .navbar-custom{
-    background: transparent;
-
+    background-color: crimson;
 }
 
 #barra-ricerca{
@@ -49,7 +41,7 @@
 }
 
 #nav-lato {
-  background: rgba(41,128,185,1);
+  background: crimson;
   padding-right: .25em;
   position: absolute;
   left: -18em;
@@ -78,10 +70,8 @@
 }
 
 body{
-    padding-top: 70px;
-    background-color: bisque;
-    background-repeat: no-repeat;
-    height:400px;
+    padding-top: 40px;
+    background-color: whitesmoke;
     top:0px;
 }
 
@@ -89,9 +79,23 @@ body{
     text-align: right;
 }
 
+.jumbotron{
+    width: 100%;
+    height: 350px;
+    color: black;
+    text-align: left;
+    text-indent: 50px;
+    background-image: url(../images/home_restaurant.jpg);
+}
+
 #map-div{
     height: 400px;
-    width: 100%;
+}
+
+.ui-autocomplete { z-index:2000 !important; }
+
+.container-fluid {
+    padding-top: 50px; 
 }
 
 .acidjs-rating-stars,
