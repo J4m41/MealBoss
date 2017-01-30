@@ -38,11 +38,16 @@ var map;
 
 function initializeMap() {
 
+    var userLat, userLng;
     
+    navigator.geolocation.getCurrentPosition(function(data){
+        userLat = data.coords.latitude;
+        userLng = data.coords.longitude;
+        map.setCenter(new google.maps.LatLng(userLat,userLng));
+    });
 
     var mapOptions = {
-        center: new google.maps.LatLng(46.057, 11.112),
-        zoom: 12,
+        zoom: 15,
         disableDefaultUI: true
     };
 

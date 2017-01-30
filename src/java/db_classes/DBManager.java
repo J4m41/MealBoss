@@ -21,6 +21,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.*;
 
 /**
@@ -540,7 +541,7 @@ public class DBManager implements Serializable {
             PreparedStatement psn = con.prepareStatement("SELECT MAX(id) FROM photos");
             ResultSet rsp = psn.executeQuery();
             while(rsp.next()){
-                next_photo_id = rsp.getInt(1);
+                next_photo_id = rsp.getInt(1)+1;
             }
             
             //query to insert photo
@@ -549,6 +550,21 @@ public class DBManager implements Serializable {
             psp.setString(2, restaurant.getPhotoPath());
             psp.setInt(3, next_id);
             psp.setInt(4, creator_id);
+            
+            psp.executeUpdate();
+            
+            //query to insert coordinates
+            float [] coordinates = null;
+            try {
+                coordinates = getCoordinates(restaurant.getAddress(), restaurant.getCivicNumber(), restaurant.getCity());
+            } catch (IOException | JSONException ex) {
+                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            PreparedStatement psc = con.prepareStatement("INSERT INTO coordinates VALUES (?,?,?)");
+            psc.setInt(1, next_id);
+            psc.setFloat(2, coordinates[0]);
+            psc.setFloat(3, coordinates[1]);
+            psc.executeUpdate();
             
             if(update == 0){
                 return false;
@@ -559,16 +575,12 @@ public class DBManager implements Serializable {
             ps.close();
             psk.close();
             psw.close();
+            psp.close();
+            psc.close();
             
-            //query to insert coordinates
-            double [] coordinates = null;
-            try {
-                coordinates = getCoordinates(restaurant.getAddress(), restaurant.getCivicNumber(), restaurant.getCity());
-            } catch (IOException | JSONException ex) {
-                Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            ObjectMapper mapper = new ObjectMapper();
             
-            System.out.println("Lat: "+coordinates[0]+" Long: "+coordinates[1]);
+            //JSONObject object = mapper.readValue();
             
         } catch (SQLException ex) {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -614,10 +626,10 @@ public class DBManager implements Serializable {
      * @throws java.io.IOException
      * @throws org.json.JSONException
      */
-    public double[] getCoordinates(String address, int civic, String city) throws IOException, JSONException{
+    public float[] getCoordinates(String address, int civic, String city) throws IOException, JSONException{
         String url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=";
         String apikey = "&key=AIzaSyDORr3b9qWZfsw4Scy6BFUpkk1EXgw_DJw";
-        double [] coordinates = new double [2];
+        float [] coordinates = new float [2];
         String fulladdress = address+" "+civic+" "+city;
         
         URL url = new URL(url1 + URLEncoder.encode(fulladdress, "UTF-8") + apikey + "&sensor=false");
@@ -630,11 +642,11 @@ public class DBManager implements Serializable {
         
         JSONObject obj = new JSONObject(json);
         
-        String latitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getString("lat");
-        String longitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getString("lng");
+        Double latitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+        Double longitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
         
-        coordinates[0] = Float.parseFloat(latitude);
-        coordinates[1] = Float.parseFloat(longitude);
+        coordinates[0] = latitude.floatValue();
+        coordinates[1] = longitude.floatValue();
         
         return coordinates;
     }

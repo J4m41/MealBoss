@@ -3,12 +3,7 @@
     Created on : 26-set-2016, 13.05.16
     Author     : leonardo
 --%>
-<%@page import="java.sql.DriverManager"%>
-<%@page import="java.sql.Statement"%>
-<%@page import="db_classes.DBManager"%>
-<%@page import="java.sql.ResultSet"%>
-<%@page import="java.util.ArrayList"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -94,7 +89,7 @@
             <br>
             <br>
             <h1>Trova qui i migliori ristoranti</h1>
-            <p>Cerca una citt√†, un ristorante o una tipologia di cucina</p>
+            <p>Cerca una citt‡, un ristorante o una tipologia di cucina</p>
             <p>Controlliamo i risultati e li ordiniamo per te, in base al punteggio</p>
         </div>
 
