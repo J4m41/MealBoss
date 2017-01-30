@@ -19,7 +19,7 @@ $('#search_bar').autocomplete({
                     }
                 }
                 if(document.getElementById('search_places').checked === true){
-                    for (var i = 0; i < data.places.length; i++){
+                    for (var i = 0; i < data.restaurants.length; i++){
                         suggestions.push(data.restaurants[i].place);
                     }
                 }
