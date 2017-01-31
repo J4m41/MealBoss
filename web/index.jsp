@@ -96,7 +96,11 @@
         <div class="col-md-2 col-sm-1 col-xs-0"></div>
         <div class="col-md-8">
             
-            
+            <div id="suggested-div">
+                <table id="suggested-table">
+                    
+                </table>
+            </div>
             
             <hr>
             <div id="map-div"></div>

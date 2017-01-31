@@ -37,7 +37,6 @@ $('#search_bar').autocomplete({
 var map;
 
 function initializeMap() {
-
     var userLat, userLng;
     
     navigator.geolocation.getCurrentPosition(function(data){
@@ -45,12 +44,11 @@ function initializeMap() {
         userLng = data.coords.longitude;
         map.setCenter(new google.maps.LatLng(userLat,userLng));
     });
-
+    
     var mapOptions = {
         zoom: 15,
         disableDefaultUI: true
     };
-
 
     map = new google.maps.Map(document.querySelector('#map-div'), mapOptions);
     
@@ -60,6 +58,8 @@ function initializeMap() {
         $.each(data.restaurants, function(key, val) {
             
             var name = val.name;
+            var descr = val.descr;
+            var place = val.place;
             
             $.each(val, function(key, val){
             
@@ -68,29 +68,25 @@ function initializeMap() {
                     map: map
                 });
                     
-                google.maps.event.addListener(marker, 'click', (function(marker,name) {
+                google.maps.event.addListener(marker, 'click', (function(marker,name, place, descr) {
                     return function() {
-                        infowindow.setContent(name);
+                        infowindow.setContent("<h1>"+name+"</h1>"
+                                +"<p>"+place+"</p>"
+                                +"<p>"+descr+"</p>");
                         infowindow.open(map, marker);
                     };
-                })(marker, name));
+                })(marker, name, place, descr));
                     
             });
                 
         });
     });
-    
+
     
     // Sets the boundaries of the map based on pin locations
     window.mapBounds = new google.maps.LatLngBounds();
 
-
-    // pinPoster(locations) creates pins on the map for each location in
-    // the locations array
 }
-
-// Calls the initializeMap() function when the page loads
-//window.addEventListener('load', initializeMap);
 
 // Vanilla JS way to listen for resizing of the window
 // and adjust map bounds
@@ -100,3 +96,72 @@ window.addEventListener('resize', function(e) {
 });
 
 $("#map-div").append(map);
+
+
+function initSuggested(){
+
+    var suggested = [];
+    var restaurant = {};
+    var userLng, userLat;
+    console.log("init");
+    
+    
+    $.getJSON("http://localhost:8080/MealBoss/media/js/suggestions.json", function(data) {
+        
+        
+        
+        $.each(data.restaurants, function(key, val) {
+
+            var name = val.name;
+            var descr = val.descr;
+            var place = val.place;
+            var photo = val.photo;
+            console.log("first");
+            $.each(val, function(key, val){
+                var lat = val.lat;
+                var lng = val.lng;
+                navigator.geolocation.getCurrentPosition(function(data){
+                    userLat = data.coords.latitude;
+                    userLng = data.coords.longitude;
+                    console.log(userLat+"AAAAAAAAAa"+typeof (userLat));
+                });
+                console.log("typeof lat: "+typeof(lat)+" typeof userLat: "+typeof(userLat));
+                console.log(userLat);
+
+                if(getDistanceFromLatLonInKm(lat, lng, userLat, userLng) < 5){
+
+                    restaurant.name = name;
+                    restaurant.place = place;
+                    restaurant.descr = descr;
+                    restaurant.photo = photo;
+                    suggested.push(restaurant);
+                    console.log("restaurant");
+                }
+            });              
+        });
+    });
+    
+    function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2-lat1);  // deg2rad below
+        var dLon = deg2rad(lon2-lon1); 
+        var a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2)
+            ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; // Distance in km
+        return d;
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI/180);
+    }
+
+    for(var i = 0; i < suggested.length; i++){
+        console.log(suggested[i]);
+        var formattedRestaurant = "<td><img src=\""+suggested.photo+"\"></td>";
+        $("#suggested-table").append(formattedRestaurant);
+    }
+}
