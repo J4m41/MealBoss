@@ -15,14 +15,17 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 import info.debatty.java.stringsimilarity.*;
 import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.json.*;
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -265,7 +268,7 @@ public class DBManager implements Serializable {
                     prs.setInt(1, rs.getInt("id"));
                     ResultSet rst = prs.executeQuery();
                     while(rst.next()){
-                        tmp.setPhotoPath(rst.getString(1));
+                        tmp.setSinglePhotoPath(rst.getString(1));
                     }
                     prs.close();
                     rst.close();                   
@@ -329,7 +332,7 @@ public class DBManager implements Serializable {
                 pst.setInt(1, rs.getInt("id"));
                 resu = pst.executeQuery();
                 if(resu.next()){
-                    tmp.setPhotoPath(resu.getString(1));
+                    tmp.setSinglePhotoPath(resu.getString(1));
                 }
                 resu.close();
                 pst.close();  
@@ -362,6 +365,117 @@ public class DBManager implements Serializable {
     
     /**
      *
+     * @param target
+     * @param byName
+     * @param byPlace
+     * @param byCuisine
+     * @return
+     * @throws java.sql.SQLException
+     */
+    public ArrayList <Restaurant> searchRestaurants(String target, boolean byName, boolean byPlace, boolean byCuisine) throws SQLException{
+        
+        LongestCommonSubsequence lcs = new LongestCommonSubsequence();
+        ArrayList <Restaurant> allResults = new ArrayList<>();
+        
+        //Query to get all restaurants and their data
+        PreparedStatement ps1 = con.prepareStatement("SELECT * FROM restaurants");
+        ResultSet rs1 = ps1.executeQuery();
+        
+        while(rs1.next()){
+            Restaurant restaurant = new Restaurant();
+            //Restaurant data
+            restaurant.setId(rs1.getInt("id"));
+            restaurant.setName(rs1.getString("name"));
+            restaurant.setAddress(rs1.getString("address"));
+            restaurant.setCity(rs1.getString("city"));
+            restaurant.setCivicNumber(rs1.getInt("civic"));
+            restaurant.setDescription(rs1.getString("description"));
+            restaurant.setWebSiteUrl(rs1.getString("web_site_url"));
+            restaurant.setGlobal_value(rs1.getDouble("global_value"));
+            restaurant.setPrice(rs1.getInt("price_range"));
+            restaurant.setId_owner(rs1.getInt("id_owner"));
+            
+            //Restaurant cuisines
+            PreparedStatement ps2 = con.prepareStatement("SELECT c.name "
+                    + "FROM cuisines AS c INNER JOIN restaurant_cuisine AS rc "
+                    + "ON c.id = rc.id_cuisine WHERE rc.id_restaurant = ?");
+            ps2.setInt(1, rs1.getInt("id"));
+            ResultSet rs2 = ps2.executeQuery();
+            ArrayList <String> cuisines = new ArrayList<>();
+            while(rs2.next()){
+                cuisines.add(rs2.getString("name"));
+            }
+            
+            String [] restaurantCuisines = new String[cuisines.size()];
+            for(int h = 0; h < cuisines.size(); h++){
+                restaurantCuisines[h] = cuisines.get(h);
+            }
+            restaurant.setCuisineTypes(restaurantCuisines);
+            
+            
+            //The data collected is enough since user can search by names, places and cuisines
+            //Need to add also photo paths for the results
+            PreparedStatement ps3 = con.prepareStatement("SELECT path FROM photos WHERE id_restaurant = ?");
+            ps3.setInt(1, rs1.getInt("id"));
+            ResultSet rs3 = ps3.executeQuery();
+            ArrayList <String> paths = new ArrayList<>();
+            while(rs3.next()){
+                paths.add(rs3.getString("path"));
+            }
+            String [] restaurantPaths = new String [paths.size()];
+            for(int n = 0; n < paths.size(); n++){
+                restaurantPaths[n] = paths.get(n);
+            }
+            restaurant.setPhotoPath(restaurantPaths);
+            
+            allResults.add(restaurant);
+        }
+        
+        ArrayList <Restaurant> finalResults = new ArrayList<>();
+        
+        //From here we select the restaurants based on the user search params
+        if(byName){
+            for(int i = 0; i < allResults.size(); i++){
+                int distance = (int)(lcs.distance(target, allResults.get(i).getName()))/2;
+                if(distance <= 2){
+                    if(!finalResults.contains(allResults.get(i))){
+                        finalResults.add(allResults.get(i));
+                    }
+                }
+                
+            }
+        }
+        if(byPlace){
+            for(int j = 0; j < allResults.size(); j++){
+                int distance = (int)(lcs.distance(target, allResults.get(j).getCity()))/2;
+                if(distance <= 2){
+                    System.out.println(j);
+                    if(!finalResults.contains(allResults.get(j))){
+                        finalResults.add(allResults.get(j));
+                    }
+                }
+                
+            }
+        }
+        if(byCuisine){
+            for(int k = 0; k < allResults.size(); k++){
+                String cuisines [] = allResults.get(k).getCuisineTypes();
+                for(int l = 0; l < cuisines.length; l++){
+                    int distance = (int)(lcs.distance(target, cuisines[l]))/2;
+                    if( distance <= 2){
+                        if(!finalResults.contains(allResults.get(k))){
+                            finalResults.add(allResults.get(k));
+                        }
+                    }
+                }
+            }
+        }
+        
+        return finalResults;
+    }
+    
+    /**
+     *
      * @param restaurant that needs to be added to DB
      * @param creator_id
      * @param isOwner
@@ -370,6 +484,7 @@ public class DBManager implements Serializable {
     public boolean addRestaurant(Restaurant restaurant, int creator_id, boolean isOwner){
         
         int next_id = 0;
+        float [] coordinates = null;
         
         try {
             //query to get the next free id for restaurant
@@ -547,17 +662,16 @@ public class DBManager implements Serializable {
             //query to insert photo
             PreparedStatement psp = con.prepareStatement("INSERT INTO photos VALUES (?,?,?,?)");
             psp.setInt(1, next_photo_id);
-            psp.setString(2, restaurant.getPhotoPath());
+            psp.setString(2, restaurant.getSinglePhotoPath());
             psp.setInt(3, next_id);
             psp.setInt(4, creator_id);
             
             psp.executeUpdate();
             
             //query to insert coordinates
-            float [] coordinates = null;
             try {
                 coordinates = getCoordinates(restaurant.getAddress(), restaurant.getCivicNumber(), restaurant.getCity());
-            } catch (IOException | JSONException ex) {
+            } catch (IOException | ParseException ex) {
                 Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
             }
             PreparedStatement psc = con.prepareStatement("INSERT INTO coordinates VALUES (?,?,?)");
@@ -578,14 +692,34 @@ public class DBManager implements Serializable {
             psp.close();
             psc.close();
             
-            ObjectMapper mapper = new ObjectMapper();
-            
-            //JSONObject object = mapper.readValue();
-            
         } catch (SQLException ex) {
             Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        JSONParser parser = new JSONParser();
+        try {
+            //Reading suggestions.json and gettin restaurants array
+            JSONObject json = (JSONObject) parser.parse(new FileReader("/home/gianma/NetBeansProjects/MealBoss/web/media/js/suggestions.json"));
+            JSONArray restaurants = (JSONArray) json.get("restaurants");
+            
+            JSONObject tba_restaurant = new JSONObject();
+            tba_restaurant.put("name", restaurant.getName());
+            tba_restaurant.put("place", restaurant.getCity());
+            JSONObject tba_coords = new JSONObject();
+            tba_coords.put("lat", coordinates[0]);
+            tba_coords.put("lng", coordinates[1]);
+            tba_restaurant.put("coords", tba_coords);
+            
+            restaurants.add(tba_restaurant);
+            
+            FileWriter file = new FileWriter("/home/gianma/NetBeansProjects/MealBoss/web/media/js/suggestions.json");
+            file.write(json.toJSONString());
+            file.flush();
+            file.close();
+            
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         
         return true;
@@ -615,8 +749,6 @@ public class DBManager implements Serializable {
         return (update != 0);
     }
     
-    
-    
     /**
      *
      * @param address
@@ -624,9 +756,9 @@ public class DBManager implements Serializable {
      * @param city
      * @return
      * @throws java.io.IOException
-     * @throws org.json.JSONException
+     * @throws org.json.simple.parser.ParseException
      */
-    public float[] getCoordinates(String address, int civic, String city) throws IOException, JSONException{
+    public float[] getCoordinates(String address, int civic, String city) throws IOException, ParseException{
         String url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=";
         String apikey = "&key=AIzaSyDORr3b9qWZfsw4Scy6BFUpkk1EXgw_DJw";
         float [] coordinates = new float [2];
@@ -640,10 +772,17 @@ public class DBManager implements Serializable {
         
         String json = output.toString();
         
-        JSONObject obj = new JSONObject(json);
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(json);
+        JSONObject root = (JSONObject) obj;
         
-        Double latitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lat");
-        Double longitude = obj.getJSONArray("results").getJSONObject(0).getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+        JSONArray results = (JSONArray) root.get("results");
+        JSONObject obj1 = (JSONObject) results.get(0);
+        JSONObject geometry = (JSONObject) obj1.get("geometry");
+        JSONObject location = (JSONObject) geometry.get("location");
+        
+        Double latitude = (double) location.get("lat");
+        Double longitude = (double) location.get("lng");
         
         coordinates[0] = latitude.floatValue();
         coordinates[1] = longitude.floatValue();

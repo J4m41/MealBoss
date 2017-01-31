@@ -59,9 +59,9 @@
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">Search by <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a><input type="checkbox" checked="true" id="search_names"> Names</a></li>
-                                <li><a><input type="checkbox" id="search_places"> Places</a></li>
-                                <li><a><input type="checkbox" id="search_cuisines"> Cuisine types</a></li>
+                                <li><a><input type="checkbox" checked="true" name="search_names" value="true" id="search_names"> Names</a></li>
+                                <li><a><input type="checkbox" name="search_places" value="true" id="search_places"> Places</a></li>
+                                <li><a><input type="checkbox" name="search_cuisines" value="true" id="search_cuisines"> Cuisine types</a></li>
                             </ul>
                         </div>
 

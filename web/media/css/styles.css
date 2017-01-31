@@ -88,6 +88,17 @@ body{
     background-image: url(../images/home_restaurant.jpg);
 }
 
+table, tr{
+    border-spacing: 50px;
+    text-align: left;
+    padding: 50px;
+}
+
+#results-img{
+    width: 300px;
+    height: 175px;
+}
+
 #map-div{
     height: 400px;
 }

@@ -15,7 +15,7 @@ public class Restaurant implements Serializable{
     
     private int id;
     private int priority;
-    private int global_value;
+    private double global_value;
     private String name;
     private String address;
     private int civicNumber;
@@ -25,7 +25,7 @@ public class Restaurant implements Serializable{
     private String[] cuisineTypes;
     private WeekSchedule week;
     private int price;
-    private String photoPath;
+    private String[] photoPath;
     private int id_owner;
     
     /**
@@ -109,15 +109,31 @@ public class Restaurant implements Serializable{
     /**
      * @return the photo_path
      */
-    public String getPhotoPath() {
+    public String[] getPhotoPath() {
         return photoPath;
     }
-
+    
+    /**
+     *
+     * @return
+     */
+    public String getSinglePhotoPath() {
+        return photoPath[0];
+    }
+    
     /**
      * @param photoPath the price to set
      */
-    public void setPhotoPath(String photoPath) {
+    public void setPhotoPath(String[] photoPath) {
         this.photoPath = photoPath;
+    }
+    
+    /**
+     *
+     * @param photoPath
+     */
+    public void setSinglePhotoPath(String photoPath) {
+        this.photoPath[0] = photoPath;
     }
 
     /**
@@ -200,14 +216,14 @@ public class Restaurant implements Serializable{
     /**
      * @return the global_value
      */
-    public int getGlobal_value() {
+    public double getGlobal_value() {
         return global_value;
     }
 
     /**
      * @param global_value the global_value to set
      */
-    public void setGlobal_value(int global_value) {
+    public void setGlobal_value(double global_value) {
         this.global_value = global_value;
     }
 

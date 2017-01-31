@@ -301,7 +301,7 @@ public class AddRestaurant extends HttpServlet {
                 File f = multi.getFile(name);
                 
                 if(name.equals("rest_photo") && f.exists()){
-                    restaurant.setPhotoPath(f.toString());
+                    restaurant.setSinglePhotoPath(f.toString());
                 }
             }
             
@@ -312,32 +312,6 @@ public class AddRestaurant extends HttpServlet {
             
             if(isOwner){
                 restaurant.setId_owner(creator);
-            }
-            
-            //just some debug code
-            System.out.println("Restaurant data:"
-                    + "\nCreator: "+creator
-                    + "\nIs Owner: "+isOwner
-                    + "\nName: "+restaurant.getName()
-                    + "\nURL: "+restaurant.getWebSiteUrl()
-                    + "\nAddress: "+restaurant.getAddress()
-                    + "\nCivic: "+restaurant.getCivicNumber()
-                    + "\nCity: "+restaurant.getCity()
-                    + "\nPrice: "+restaurant.getPrice()
-                    + "\nDescription: "+restaurant.getDescription()
-                    + "\nPhotoPath: "+restaurant.getPhotoPath()
-                    + "\nCuisineTypes: ");
-            for(String s: restaurant.getCuisineTypes()){
-                System.out.print(s+" ");
-            }
-            System.out.println("Open days:\n");
-            System.out.println("Monday: "+restaurant.getWeek().isMonday());
-            if(restaurant.getWeek().isMonday()){
-                System.out.println("Lunch: "+restaurant.getWeek().getMonday_l_op()+" to "+restaurant.getWeek().getMonday_l_cl());
-            }
-            System.out.println("Tuesday: "+restaurant.getWeek().isTuesday());
-            if(restaurant.getWeek().isTuesday()){
-                System.out.println("Lunch: "+restaurant.getWeek().getTuesday_l_op()+" to "+restaurant.getWeek().getTuesday_l_cl());
             }
             
             manager.addRestaurant(restaurant, creator, isOwner);

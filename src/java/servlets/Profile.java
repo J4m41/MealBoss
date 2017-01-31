@@ -16,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -48,17 +47,14 @@ public class Profile extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         //prendo il nome del ristorante passato come parametro
-        String tmp = new String();
-        tmp = request.getParameter("name");
-        String restName = new String();
-        restName = tmp.replaceAll("_", " ");
+        String tmp = request.getParameter("name");
+        String restName = tmp.replaceAll("_", " ");
                 
         out.println("<html><head><title>"+restName+"</title>");
         request.getRequestDispatcher("header.jsp").include(request, response);
         
-        Restaurant res_tmp = new Restaurant();
-        res_tmp = manager.getRestaurant(restName);
-        out.println("<div class=\"jumbotron\" id=\"jumbo-res\" background=\""+ res_tmp.getPhotoPath() +"\">");
+        Restaurant res_tmp = manager.getRestaurant(restName);
+        out.println("<div class=\"jumbotron\" id=\"jumbo-res\" background=\""+ res_tmp.getSinglePhotoPath() +"\">");
         System.out.println("nome: "+res_tmp.getName());
         out.println("<h1 id=\"profile-res-title\">"+res_tmp.getName()+"</h1>");
         if(request.getSession().getAttribute("user")!=null){

@@ -9,6 +9,7 @@ import db_classes.DBManager;
 import db_classes.Restaurant;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -44,22 +45,33 @@ public class ShowResults extends HttpServlet {
         response.setContentType("text/html");
         //prendo il campo cercato
         String target = request.getParameter("search_bar");
+        String searchByNames = request.getParameter("search_names");
+        String searchByPlaces = request.getParameter("search_places");
+        String searchByCuisines = request.getParameter("search_cuisines");
+        
+        boolean names = false, places = false, cuisines = false;
+        if (searchByNames != null && searchByNames.equals("true")){
+            names = true;
+        }
+        if (searchByPlaces != null && searchByPlaces.equals("true")){
+            places = true;
+        }
+        if (searchByCuisines != null && searchByCuisines.equals("true")){
+            cuisines = true;
+        }
+        
         ArrayList<Restaurant> searched_res = new ArrayList<>();
         
         try {
             out.println("<html><head>");
-            searched_res = manager.getRestaurantsByName(target);
+            searched_res = manager.searchRestaurants(target, names, places, cuisines);
             request.getRequestDispatcher("header.jsp").include(request, response);
-            
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/media/js/dataTables.js");
-            
+
             //qua c'è la tabella centrata con l' elenco dei risto
-            out.println("<div class=\"col-md-2\"></div><div class=\"col-md-6\">"
-                    + "<form action=\"Profile\" method=\"POST\">"
+            out.println("<div class=\"col-md-2\"></div><div class=\"col-md-8\">"
+                    + "<div class=\"container-fluid\"><form action=\"Profile\" method=\"POST\">"
                     + "<table id=\"res_tab\">");
-            if(searched_res.size()!= 0){
-                
-                
+            if(!searched_res.isEmpty()){
                 
                 for(int i = 0; i<searched_res.size();i++){ 
                         HttpSession session = request.getSession(false);
@@ -67,17 +79,33 @@ public class ShowResults extends HttpServlet {
                         String tmp = new String();
                         tmp = newName.replaceAll("\\s+","_");
                         session.setAttribute("name", searched_res.get(i).getName());
-                        out.println("<tr>");
-                        out.println("<ul><h1><a href=\"Profile?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");
+                        out.println("<tr>"
+                                + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getSinglePhotoPath()+"\" id=\"results-img\"></td>");
+                        out.println("<td><ul><h1><a href=\"Profile/?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");
+                        
+                        String address = searched_res.get(i).getAddress()+" "+searched_res.get(i).getCivicNumber()+" "+searched_res.get(i).getCity();
+                        out.println("<ul><a href=\"https://www.google.it/maps/?q="+URLEncoder.encode(address, "utf-8")+"\" target=\"_blank\">"+searched_res.get(i).getAddress()+", "+searched_res.get(i).getCivicNumber()
+                                + ", "+searched_res.get(i).getCity()+"</a></ul>");
+                        
                         out.println("<ul> "+searched_res.get(i).getDescription()+" </ul>");
-                        //out.println("<ul> "+searched_res.get(i).getCuisineTypes()+" </ul>");
-                        out.println("<ul><a href=\""+searched_res.get(i).getWebSiteUrl()+"\">"+searched_res.get(i).getWebSiteUrl()+"</a> </ul>");
+                        
+                        out.println("<ul>");
+                        String [] cuisineTypes = searched_res.get(i).getCuisineTypes();
+                        for(int j = 0; j < cuisineTypes.length; j++){
+                            out.print(cuisineTypes[j]);
+                            if(j != cuisineTypes.length-1){
+                                out.print(", ");
+                            }
+                        }
+                        out.println("</ul>");
+                        
+                        out.println("<ul><a href=\""+searched_res.get(i).getWebSiteUrl()+"\">"+searched_res.get(i).getWebSiteUrl()+"</a> </ul></td>");
                         out.println("</tr>");
                 }                
                 
             }
             
-            out.println("</table></form></div><div class=\"col-md-2\"></div>"
+            out.println("</table></form></div></div><div class=\"col-md-2\"></div>"
                     +"<script src=\"media/js/scripts.js\"></script>"
                     + "</body></html>");
         } catch (SQLException ex) {
