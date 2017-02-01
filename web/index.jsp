@@ -39,7 +39,7 @@
             </c:if>
             <c:if test="${sessionScope.user != null}">
                 <ul class="menu">
-                    <li>Welcome back <c:out value="${sessionScope.user.firstname}"></c:out></li>
+                    <li><p> Welcome back <c:out value="${sessionScope.user.firstname}"></c:out><p></li>
                     <li><a href="index.jsp">Home</a></li>
                     <li><a href="profile_page.jsp">My profile</a></li>
                     <li><a href="#">My notifications</a></li>
@@ -85,7 +85,7 @@
             
         </nav>
 
-        <div class="jumbotron">
+        <div class="jumbotron" id="home-jumbo">
             <br>
             <br>
             <h1>Trova qui i migliori ristoranti</h1>

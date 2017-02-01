@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.*;
@@ -175,122 +176,6 @@ public class DBManager implements Serializable {
         
         return false;  
     }
-    /**
-     * @return tutti i ristorant (ma solo id, nome e descrizione)
-     */
-    public ArrayList<Restaurant> getRestaurants() throws SQLException{
-        
-        ArrayList<Restaurant> results = new ArrayList<Restaurant>();
-        
-        String query = "SELECT * FROM restaurants";
-        PreparedStatement ps = con.prepareStatement(query);
-        ResultSet rs = ps.executeQuery();
-        
-        Restaurant tmp = new Restaurant();
-        
-        try{
-            if(rs.next()){
-                
-                tmp.setId(rs.getInt("id"));
-                tmp.setName(rs.getString("name"));
-                tmp.setDescription(rs.getString("description"));
-                //qua la query per prendere il tipo di cucina
-                query = "SELECT cuisines.id "
-                        + "FROM (restaurants_cuisine INNER JOIN restaurants ON restaurants_cuisine.id_restaurants = restaurants.id)"
-                        + "INNER JOIN cuisines ON restaurant_cuisine.id_cuisine = cuisines.id WHERE restaurants.name = ?";
-                PreparedStatement pst = con.prepareStatement(query);
-                pst.setString(1, tmp.getName());
-                ResultSet resu = pst.executeQuery();
-                System.out.println(resu.getString("cuisines.id"));
-                //tmp.setCuisineTypes(resu.getString("cuisines.id"));
-                //qua la query per prendere il sito web
-                //tmp.setWebSiteUrl(query);
-                //altra query per prendere gli orari d' apertura
-                //tmp.setOpeningHours(query);
-                results.add(tmp);
-                
-            }
-        }finally{
-            rs.close();
-            ps.close();
-        }
-        
-        return results;
-        
-    }
-    /**
-     * @param search il ristorante da cercare
-     * @return a list of restaurants col norme pertinente alla ricerca, massimo 2 errori
-     * @throws java.sql.SQLException
-     */
-    public ArrayList<Restaurant> getRestaurantsByName(String search) throws SQLException{
-        
-        ArrayList<Restaurant> results = new ArrayList<>();
-        //questo mi serve per calcolare gli lcs delle parole
-        LongestCommonSubsequence lcs = new LongestCommonSubsequence();
-        
-        String query = "SELECT * FROM restaurants";
-        PreparedStatement ps = con.prepareStatement(query);
-        //ps.setString(1, search+"%");
-        ResultSet rs = ps.executeQuery();
-        Restaurant tmp = new Restaurant();
-        
-        try{
-            int i = 0;
-            while(rs.next()){
-                
-                System.out.println(""+"search: "+search+" rs.getString: "+rs.getString("name")+" distanza: "+lcs.distance(search, rs.getString("name")));
-                int distanza = (int) (lcs.distance(search, rs.getString("name"))/2);
-                if(distanza<=2){
-                    //setto l' id
-                    tmp.setId(rs.getInt("id"));
-                    //setto il nome
-                    tmp.setName(rs.getString("name"));
-                    //setto la descrizione
-                    tmp.setDescription(rs.getString("description"));
-                    //setto il website
-                    tmp.setWebSiteUrl(rs.getString("web_site_url"));
-                    //qua la query per prendere il tipo di cucina
-                    query = "SELECT c.name "
-                            + "FROM (restaurant_cuisine AS rc INNER JOIN restaurants AS r ON rc.id_restaurant = r.id)"
-                            + "INNER JOIN cuisines AS c ON rc.id_cuisine = c.id WHERE r.name = ?";
-                    PreparedStatement pst = con.prepareStatement(query);
-                    pst.setString(1, tmp.getName());
-                    ResultSet resu = pst.executeQuery();
-                    //if(resu.next()){
-                    //    tmp.setCuisineTypes(resu.getString(1));
-                    //}
-                    resu.close();
-                    pst.close(); 
-                    //qua la query per prendere foto sito web
-                    query = "SELECT path FROM photos WHERE id_restaurant = ?";
-                    PreparedStatement prs = con.prepareStatement(query);
-                    prs.setInt(1, rs.getInt("id"));
-                    ResultSet rst = prs.executeQuery();
-                    while(rst.next()){
-                        tmp.setSinglePhotoPath(rst.getString(1));
-                    }
-                    prs.close();
-                    rst.close();                   
-                    //
-                    //altra query per prendere gli orari d' apertura
-                    results.add(tmp);
-                    
-                    
-                }
-                i++;
-                System.out.println(results.size()+" $$ i: "+i);
-                
-                
-            }
-        }finally{
-            rs.close();
-            ps.close();
-        }
-        
-        return results;
-        
-    }
     
     /**
      * @param search il nome del ristorante da cercare
@@ -332,7 +217,7 @@ public class DBManager implements Serializable {
                 pst.setInt(1, rs.getInt("id"));
                 resu = pst.executeQuery();
                 if(resu.next()){
-                    tmp.setSinglePhotoPath(resu.getString(1));
+                    tmp.setSinglePhotoPath(resu.getString("path"));
                 }
                 resu.close();
                 pst.close();  
@@ -348,20 +233,208 @@ public class DBManager implements Serializable {
         return tmp;
         
     }
-    //chiamata quando si effettua un commento
-    public void addReviewPerRestaurant(String user,String restaurant){
+    
+        //chiamata quando si effettua un commento
+    public int addReviewPerRestaurant(int user,int restaurant,int rating,Timestamp ora,String title,String description,int img) throws SQLException{
+        System.out.println("sono entrato nela query");
+        String query = "INSERT INTO reviews(id,title,global_value,description,date_creation,id_restaurant,id_creator,id_photo,validated,likes) "
+                + "VALUES (?,?,?,?,?,?,?,?,?,?);";
+        PreparedStatement ps = con.prepareStatement(query);
+        int next_id = 0;
+        try{
+            //query to get the next free id for restaurant
+            
+            String query1 = "SELECT MAX(id) FROM REVIEWS";
+            PreparedStatement ps1 = con.prepareStatement(query1);
+            ResultSet rs1 = ps1.executeQuery();
+            while(rs1.next()){
+                next_id = rs1.getInt(1) + 1;
+            }
+            rs1.close();
+            System.out.println("sto settando query");
+            
+            ps.setInt(1,next_id);
+            ps.setString(2,title);
+            ps.setInt(3,3);
+            ps.setString(4,description);
+
+            ps.setTimestamp(5, ora);
+
+            ps.setInt(6,restaurant);
+            ps.setInt(7,user);
+            ps.setInt(8,1);
+            ps.setInt(9,0);
+            ps.setInt(10, 0); 
+            try{
+            ResultSet result = ps.executeQuery();
+            }catch(SQLException e){
+                System.out.println(e.toString());
+            }
+            ps.close();
+        }catch(Exception e){
+        }
+        return next_id;
+        
     }
     
-    //aggiungi recensione
-    public ArrayList<String> getReviewPerRestaurant(String restaurant){
+    //ritorna recensioni
+    public ArrayList<Review> getReviewPerRestaurant(String restaurant) throws SQLException{
         
-        ArrayList<String> restaurantReviews = new ArrayList<>();
+        ArrayList<Review> restaurantReviews = new ArrayList<>();
         
+        String query1 = "SELECT id FROM RESTAURANTS WHERE name = ?";
+        PreparedStatement ps1 = con.prepareStatement(query1);
+        ps1.setString(1, restaurant);
+        ResultSet rs1 = ps1.executeQuery();
+        rs1.next();
+        int restId = rs1.getInt(1);
+        rs1.close();
+        ps1.close();
         
+        String query = "SELECT * FROM REVIEWS WHERE id_restaurant = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, restId);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            Review rev = new Review();
+            rev.setId(rs.getInt(1));
+            rev.setData(rs.getDate(5));
+            rev.setDescription(rs.getString(4));
+            rev.setRating(rs.getInt(3));
+            rev.setRestaurant(rs.getInt(6));
+            rev.setTitle(rs.getString(2));
+            rev.setUser(rs.getInt(7));
+            rev.setImg(rs.getInt(8));
+            restaurantReviews.add(rev);
+            //rs.next();
+        }
         
         return restaurantReviews;
         
     }
+    public void updateReviewLikes(int revId, int value) throws SQLException{
+        
+        String qquery = "SELECT likes FROM reviews WHERE id = ?";
+        PreparedStatement psdb = con.prepareStatement(qquery);
+        psdb.setInt(1,revId);
+        System.out.println("debug +++++ "+value);
+        ResultSet rss = psdb.executeQuery();
+        int like = 0;
+        if(rss.next())
+             like = rss.getInt(1);
+        
+        if(value==1)
+            like+=1;
+        else
+            like-=1;
+        System.out.println("likes attuali: "+like);
+        String query = "UPDATE reviews SET likes = ? WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, like);
+        ps.setInt(2, revId);
+        
+        try{
+            int rs = ps.executeUpdate();
+            System.out.print(rs);
+        }catch(SQLException e){
+            System.out.println(e.toString());
+        }
+        
+    }
+    //l' user ha fatto un azione, idNotified è colui che riceve la notifica
+    public void notifyUser(int user,int idNotified,int idReview,int type,String description) throws SQLException{
+        
+        String insertQuery = "INSERT INTO notifications(id,id_notifier,id_notifier,type,description,id_review,id_photo) "+
+                "VALUES (?,?,?,?,?,?,?);";
+        PreparedStatement ps = con.prepareStatement(insertQuery);
+        
+        int next_id = 0;
+        String query1 = "SELECT MAX(id) FROM NOTIFICATIONS";
+        PreparedStatement ps1 = con.prepareStatement(query1);
+        ResultSet rs1 = ps1.executeQuery();
+        while(rs1.next()){
+            next_id = rs1.getInt(1) + 1;
+        }
+        rs1.close();
+        
+        ps.setInt(1, next_id);
+        switch(type){
+                case 0 :    //Recensione
+                    ps.setInt(2,user);
+                    ps.setInt(3,idNotified);
+                    ps.setInt(4, type);
+                    ps.setString(5, "a user reviewed your restaurant, id review: "+idReview);
+                    ps.setInt(6,idReview);
+                    ps.setInt(7, 0);
+                    break;
+                case 1:     //Recensione + foto
+                    ps.setInt(2,user);
+                    ps.setInt(3,idNotified);
+                    ps.setInt(4, type);
+                    ps.setString(5, "a user reviewed your restaurant with a photo, id review: "+idReview);
+                    ps.setInt(6,idReview);
+                    String queryPhoto = "SELECT id_photo FROM reviews WHERE id = ?";
+                    PreparedStatement pss = con.prepareStatement(queryPhoto);
+                    pss.setInt(1, idReview);
+                    ResultSet rs = pss.executeQuery();
+                    if(rs.next()){
+                        ps.setInt(7, rs.getInt(1));
+                    }
+                    break;
+                case 2:     //segnalazione foto
+                    ps.setInt(2,user);
+                    ps.setInt(3,idNotified);
+                    ps.setInt(4, type);
+                    ps.setString(5, "a restaurant's owner disliker you photo, id review: "+idReview);
+                    ps.setInt(6,idReview);
+                    String queryPhoto1 = "SELECT id_photo FROM reviews WHERE id = ?";
+                    PreparedStatement pss1 = con.prepareStatement(queryPhoto1);
+                    pss1.setInt(1, idReview);
+                    ResultSet rs11 = pss1.executeQuery();
+                    if(rs11.next()){
+                        ps.setInt(7, rs11.getInt(1));
+                    }
+                    break;
+                case 3:     //Risposta a recensione
+                    ps.setInt(2, user);
+                    ps.setInt(3, idNotified);
+                    ps.setInt(4, type);
+                    ps.setString(5, "a restourant's owner replied to your review n°: "+idReview);
+                    break;
+                case 4:     //like a recensione
+                    ps.setInt(2, user);
+                    ps.setInt(3, idNotified);
+                    ps.setInt(4, type);
+                    ps.setString(5, "your review recived a like: "+idReview);
+                    break;
+        }
+        try{
+        ResultSet rs = ps.executeQuery();
+        }catch(SQLException e){
+            System.out.println(e.toString());
+        }
+    };
+    
+    public int getOwnerId(int restaurant) throws SQLException{
+        int id = 0;
+        String query = "SELECT id_owner FROM restaurants WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, restaurant);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next())
+            id = rs.getInt(1);
+        return id;
+    }
+    
+    
+    
+    public ArrayList<Notification> getNotificationPerUser(){
+        
+        ArrayList<Notification> notifiche = new ArrayList<>();
+        return notifiche;
+    
+    }
+
     
     /**
      *
@@ -447,7 +520,7 @@ public class DBManager implements Serializable {
         }
         if(byPlace){
             for(int j = 0; j < allResults.size(); j++){
-                int distance = (int)(lcs.distance(target, allResults.get(j).getCity()))/2;
+                int distance = (int)(lcs.distance(target, allResults.get(j).getAddress()+" "+allResults.get(j).getCivicNumber()+" "+allResults.get(j).getCity()))/2;
                 if(distance <= 2){
                     System.out.println(j);
                     if(!finalResults.contains(allResults.get(j))){
@@ -472,6 +545,17 @@ public class DBManager implements Serializable {
         }
         
         return finalResults;
+    }
+    
+    public int getRestaurantId(String name) throws SQLException{
+        int id = 0;
+        String query = "SELECT id FROM restaurants WHERE name = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setString(1,name);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next())
+            id = rs.getInt(1);
+        return id;
     }
     
     /**

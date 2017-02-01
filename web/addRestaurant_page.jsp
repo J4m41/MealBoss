@@ -557,8 +557,7 @@
                     <div class="form-group">
                         <div class="col-md-8">
                             <label for="descr_area">Descrizione:</label>
-                            <textarea class="form-control" required="true" id="descr_area" name="descrpt" cols="60" rows="5">
-                            </textarea>
+                            <textarea class="form-control" required="true" id="descr_area" name="descrpt" cols="60" rows="5" placeholder="Description"></textarea>
                         </div>
                     </div>
                 </div>

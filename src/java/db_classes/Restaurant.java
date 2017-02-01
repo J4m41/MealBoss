@@ -28,6 +28,8 @@ public class Restaurant implements Serializable{
     private String[] photoPath;
     private int id_owner;
     
+    
+    
     /**
      * @return the id
      */
@@ -133,6 +135,7 @@ public class Restaurant implements Serializable{
      * @param photoPath
      */
     public void setSinglePhotoPath(String photoPath) {
+        this.photoPath = new String[2];
         this.photoPath[0] = photoPath;
     }
 

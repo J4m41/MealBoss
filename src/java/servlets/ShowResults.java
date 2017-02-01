@@ -78,10 +78,9 @@ public class ShowResults extends HttpServlet {
                         String newName = searched_res.get(i).getName();
                         String tmp = new String();
                         tmp = newName.replaceAll("\\s+","_");
-                        session.setAttribute("name", searched_res.get(i).getName());
                         out.println("<tr>"
                                 + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getSinglePhotoPath()+"\" id=\"results-img\"></td>");
-                        out.println("<td><ul><h1><a href=\"Profile/?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");
+                        out.println("<td><ul><h1><a href=\""+request.getContextPath()+"/Profile?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");
                         
                         String address = searched_res.get(i).getAddress()+" "+searched_res.get(i).getCivicNumber()+" "+searched_res.get(i).getCity();
                         out.println("<ul><a href=\"https://www.google.it/maps/?q="+URLEncoder.encode(address, "utf-8")+"\" target=\"_blank\">"+searched_res.get(i).getAddress()+", "+searched_res.get(i).getCivicNumber()
