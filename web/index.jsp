@@ -93,14 +93,20 @@
             <p>Controlliamo i risultati e li ordiniamo per te, in base al punteggio</p>
         </div>
 
-        <div class="col-md-2 col-sm-1 col-xs-0"></div>
-        <div class="col-md-8">
-            
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
             <div id="suggested-div">
+                <h1>The best restaurants near you:</h1>
                 <table id="suggested-table">
-                    
+                    <tr id="suggested-img"></tr>
+                    <tr id="suggested-data"></tr>
                 </table>
             </div>
+        </div>
+        <div class="col-md-1"></div>
+        
+        <div class="col-md-2 col-sm-1 col-xs-0"></div>
+        <div class="col-md-8">
             
             <hr>
             <div id="map-div"></div>

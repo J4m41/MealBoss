@@ -94,6 +94,25 @@ table, tr{
     padding: 50px;
 }
 
+
+
+#suggested-table{
+    border-spacing: 75px 10px;
+    border-collapse: separate;
+    text-align: left;
+    vertical-align: top;
+    border: 1px solid black;
+}
+
+#sugg-data{
+    vertical-align: text-top;
+}
+
+#suggested-img{
+    width: 220px;
+    height: 130px;
+}
+
 #results-img{
     width: 300px;
     height: 175px;

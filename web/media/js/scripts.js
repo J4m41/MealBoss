@@ -100,46 +100,68 @@ $("#map-div").append(map);
 
 function initSuggested(){
 
-    var suggested = [];
-    var restaurant = {};
-    var userLng, userLat;
-    console.log("init");
+    var suggested = 0;
+    var suggestions = [];
     
-    
-    $.getJSON("http://localhost:8080/MealBoss/media/js/suggestions.json", function(data) {
-        
-        
-        
-        $.each(data.restaurants, function(key, val) {
+    var options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+    };
 
-            var name = val.name;
-            var descr = val.descr;
-            var place = val.place;
-            var photo = val.photo;
-            console.log("first");
-            $.each(val, function(key, val){
-                var lat = val.lat;
-                var lng = val.lng;
-                navigator.geolocation.getCurrentPosition(function(data){
-                    userLat = data.coords.latitude;
-                    userLng = data.coords.longitude;
-                    console.log(userLat+"AAAAAAAAAa"+typeof (userLat));
+    function success(pos) {
+        var crd = pos.coords;
+        
+        $.getJSON("http://localhost:8080/MealBoss/media/js/suggestions.json", function(data) {
+        
+            $.each(data.restaurants, function(key, val) {
+
+                var name = val.name;
+                var descr = val.descr;
+                var place = val.place;
+                var photo = val.photo;
+                $.each(val, function(key, val){
+                    var lat = val.lat;
+                    var lng = val.lng;
+                    var distance = getDistanceFromLatLonInKm(lat, lng, crd.latitude, crd.longitude);
+                    var restaurant = {
+                        name: name,
+                        descr: descr,
+                        place: place,
+                        photo: photo,
+                        distance: distance
+                    };
+                            
+                    if(distance < 4){
+                        suggested++;
+                        suggestions.push(restaurant);
+                    }
+                    
                 });
-                console.log("typeof lat: "+typeof(lat)+" typeof userLat: "+typeof(userLat));
-                console.log(userLat);
-
-                if(getDistanceFromLatLonInKm(lat, lng, userLat, userLng) < 5){
-
-                    restaurant.name = name;
-                    restaurant.place = place;
-                    restaurant.descr = descr;
-                    restaurant.photo = photo;
-                    suggested.push(restaurant);
-                    console.log("restaurant");
-                }
-            });              
+                
+            });
+            
+            suggestions.sort(function(a,b){
+                                return a.distance - b.distance;
+                            });
+            for(var k = 0; k < suggestions.length; k++){
+                var formattedImg = "<td><img id=\"suggested-img\" src=\""+suggestions[k].photo+"\"></td>";
+                var formattedData = "<td id=\"sugg-data\"><h1><a href=\"#\">"+suggestions[k].name+"</a></h1>"
+                                    +"<p>"+suggestions[k].place+"</p>"
+                                    +"<p>"+suggestions[k].descr+"</p>"
+                                    +"<p><b>Distance:</b> "+suggestions[k].distance.toFixed(1)+" km</p></td>";
+                $("#suggested-img").append(formattedImg);
+                $("#suggested-data").append(formattedData);
+            }
+            
         });
-    });
+    };
+
+    function error(err) {
+        console.warn("ERROR: "+err.message);
+    };
+
+    navigator.geolocation.getCurrentPosition(success, error, options);
     
     function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
         var R = 6371; // Radius of the earth in km
@@ -158,10 +180,7 @@ function initSuggested(){
     function deg2rad(deg) {
         return deg * (Math.PI/180);
     }
-
-    for(var i = 0; i < suggested.length; i++){
-        console.log(suggested[i]);
-        var formattedRestaurant = "<td><img src=\""+suggested.photo+"\"></td>";
-        $("#suggested-table").append(formattedRestaurant);
-    }
+    
 }
+
+initSuggested();
