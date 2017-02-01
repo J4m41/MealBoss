@@ -237,12 +237,26 @@ VALUES(1 ,'Italiana'),
 INSERT INTO RESTAURANTS
 VALUES(1, 'Bella Napoli', 'Viale Verona', '5', 'Trento', 'Pizza napoletana di qualità con cottura a legna', 'www.pizzanapoli.it',3,2,4,4),
 (2, 'Cinese Party', 'Corso 3 Novembre', '23', 'Trento', 'Cucina cinese cucinata da un vero chef cinese qualificato alla scuola più difficile di Pechino', 'www.cineseparty.com',4,2,5,5),
-(3, 'Zushi', 'Piazza Venezia', '9', 'Trento', 'Sushi e ALL YOU CAN EAT a pranzo e cena','www.zushi.com',4.3,2,0,1);
+(3, 'Zushi', 'Piazza Venezia', '9', 'Trento', 'Sushi e ALL YOU CAN EAT a pranzo e cena','www.zushi.com',4.3,2,0,1),
+(4, 'Rosa D*oro', 'Piazza Santa Maria Maggiore', '21','Trento', 'Piatti trentini, pizza e dolci casarecci serviti in sale semplici con arredi di legno in stile bavarese.','www.ristoranterosadoro.com/', 4.5,2,0,1),
+(5, 'Pazzi per la pizza', 'Via Verona', '18','Trento', 'Pizza meravigliose a un prezzo basso','www.ristoranterosadoro.com/', 3.5 ,1,11,1),
+(6, 'Trattoria Ristorante Orso Grigio', 'Via degli Orti', '19','Trento', 'Canederli e brasato al Teroldego in un ristorante familiare all*interno di un ex teatro con giardino estivo.', 'www.orsogrigiotrento.com', 3.6,2,5,1),
+(7, 'Trattoria Al Mercato', 'Piazza Garzetti Giambattista','15','Trento','Trattoria trentina con solo piatti tipici', 'www.trattoriamercato.com',4.0,3,7,1),
+(8, 'Ristorante Al Tino',  'Via SS. Trinita', '10','Trento', 'Buontà trentine e pizza a volontà', 'www.ristotino.com', 3.6,2,4,1),
+(9, 'Trattoria Piedicastello' ,'Piazza di Piedicastello', '10','Trento', 'Piatti trentini e non solo, tutto materiale fresco di stagione', 'www.trattoriapiedicastello.com',4.3,3,0,1),
+(10, 'Pizzeria da Albert' , 'Via Bernardino Bomporto', '2','Trento', 'Birre artigianali e pizze creative proposte in un piccolo e movimentato locale dall*atmosfera informale. ', 'www.albertpizza.com',4.8,3,8,1);
 
 INSERT INTO COORDINATES
 VALUES(1, 46.06941967, 11.12015963),
 (2, 46.06657618, 11.11823916),
-(3, 46.06483428, 11.12334609);
+(3, 46.06483428, 11.12334609),
+(4, 46.0686385, 11.119460900000036),
+(5, 46.06483428, 11.12334609),
+(6, 46.0655176, 11.122614099999964),
+(7, 46.06585, 11.124009999999998),
+(8, 46.04325, 10.98416999999995),
+(9, 46.0710589, 11.114490799999999),
+(10, 46.0651512, 11.117452700000058);
 
 INSERT INTO OPENING_HOURS_RESTAURANTS
 VALUES(1, 6, '9:00:00', '14:30:00','17:00:00', '00:30:00'),
@@ -264,7 +278,49 @@ VALUES(1, 6, '9:00:00', '14:30:00','17:00:00', '00:30:00'),
 (3, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
 (3, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
 (3, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
-(3, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00');
+(3, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(4, 2, '10:00:00', '14:30:00','16:30:00', '23:30:00'),
+(4, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(4, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(4, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(4, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(4, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(5, 2, '10:00:00', '14:30:00','16:30:00', '23:30:00'),
+(5, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(5, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(5, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(5, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(5, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(6, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(6, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(6, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(6, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(6, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(7, 2, '10:00:00', '14:30:00','16:30:00', '23:30:00'),
+(7, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(7, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(7, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(7, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(7, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(8, 1, '10:00:00', '14:30:00','16:30:00', '23:30:00'),
+(8, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(8, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(8, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(8, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(8, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(9, 1, '10:00:00', '14:30:00','16:30:00', '23:30:00'),
+(9, 2, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(9, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(9, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(9, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(9, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(10, 2, '10:00:00', '14:30:00','16:30:00', '23:30:00'),
+(10, 3, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(10, 4, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(10, 5, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(10, 6, '7:00:00', '13:30:00', '17:00:00', '23:30:00'),
+(10, 7, '7:00:00', '13:30:00', '17:00:00', '23:30:00');
+
 
 INSERT INTO RESTAURANT_CUISINE
 VALUES(1,1),
@@ -272,19 +328,41 @@ VALUES(1,1),
 (2,2),
 (2,10),
 (3,2),
-(3,10);
+(3,10),
+(3,11),
+(4,1),
+(4,12),
+(5,12),
+(6,12),
+(7,12),
+(8,12),
+(8,1),
+(9,12),
+(10,12);
 
 INSERT INTO PHOTOS
 VALUES(1, 'media/images/home_restaurant.jpg', 2, 6),
 (2, 'media/images/food-pizza-restaurant-eating.jpg', 1, 6),
 (3, 'media/images/vegetables-italian-pizza-restaurant.jpg', 1, 4),
 (4, 'media/images/menu-restaurant-vintage-table.jpg', 3, 1),
-(5, 'media/images/pexels-photo-221143.jpeg', 2, 1);
+(5, 'media/images/pexels-photo-221143.jpeg', 2, 1),
+(6, 'media/images/restaurant-carousel-1.jpg', 3, 3),
+(7, 'media/images/restswag.jpeg', 2, 2),
+(8, 'media/images/ristoclass.jpeg', 4, 4),
+(9, 'media/images/ristocool.jpeg', 3, 3),
+(10, 'media/images/ristovegan.jpeg', 1, 1);
 
 INSERT INTO REVIEWS
 VALUES(1, 'Non male', 3, 'Non era male ma materia prima scadente', '2016-05-23 21:15:25', 1, 6, 2, 0),
 (2, 'Festone cinese come non mai', 4, 'Cibo decente ma il personale fantastico', '2016-05-23 21:15:25', 2, 6, 1, 1),
-(3, 'Spero sia uno scherzo...', 4, 'Metto 4 stelle solo per prova', '2017-01-20 22:23:44', 2, 1, 5, 0);
+(3, 'Spero sia uno scherzo...', 4, 'Metto 4 stelle solo per prova', '2017-01-20 22:23:44', 2, 1, 5, 0),
+(4, 'Uno stinco degno di un re', 5, 'Tutto eccellente ! Direi perfetto!', '2016-05-23 21:15:25', 3, 4, 2, 1),
+(5, 'Prodotti molto freschi', 3, 'Però abbiamo dovuto aspettare 1 ora', '2017-01-21 21:15:25', 4, 8, 3, 1),
+(6, 'Prodotti buoni', 3, 'Cibo decente', '2017-01-21 21:16:25', 5, 3, 4, 1),
+(7, 'Mai più', 1, '2 ore e mezza di attesa, mai più', '2017-01-21 21:17:20', 6, 10, 5, 1),
+(8, 'Pizza eccezionale', 4, 'Speciale, consiglio vivamente', '2017-01-21 21:17:55', 7, 11, 4, 1),
+(9, 'Piatti maestosi e buoni', 4, 'Tornerò ogni volta che verrò a trento, troppo buono!', '2017-01-21 22:25:01', 8, 5, 3, 1),
+(10, 'Niente di speciale', 2, 'Avrei fatto di meglio io', '2017-01-21 23:15:25', 9, 7, 1, 1);
 
 INSERT INTO REPLIES
 VALUES(1, 'Ma stai zitto', '2016-05-24 21:34:25', 1, 4),

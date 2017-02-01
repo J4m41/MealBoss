@@ -147,7 +147,7 @@ function initSuggested(){
                                 return a.distance - b.distance;
                             });
             if (windowWidth > 500){
-                for(var k = 0; k < suggestions.length; k++){
+                for(var k = 0; k < 3; k++){
                     var formattedImg = "<td><img id=\"suggested-img\" src=\""+suggestions[k].photo+"\"></td>";
                     var formattedData = "<td id=\"sugg-data\"><h1><a href=\"#\">"+suggestions[k].name+"</a></h1>"
                                         +"<p>"+suggestions[k].place+"</p>"

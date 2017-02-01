@@ -9,7 +9,7 @@
 <html>
     <head>
         
-        <jsp:include page="header.jsp"></jsp:include>
+    <jsp:include page="header.jsp"></jsp:include>
         
     <div class="col-md-2"></div>
     <div class="col-md-10">

@@ -1,6 +1,6 @@
 # MealBoss
 
-Questa volta non ci dovrebbero essere problemi di dipendenze da HW, paths diversi per l'update a gitignore.
+Gitignore update per evitare problemi di compatibilità tra collaboratori.
 Le librerie usate sono tutte all'interno di WEB-INF/lib.
 
 Per clonare il progetto e farlo funzionare:
@@ -12,6 +12,4 @@ Per clonare il progetto e farlo funzionare:
 
 Consiglio prima, però, di forkare da GitHub la mia e poi clonare dalla vostra così non ci sono problemi poi per pushare.
 
-N.B: Sarà necessario cambiare dati di accesso al DB nel web.xml file.
-
-CON QUESTO PROCEDIMENTO A ME E' FUNZIONATO CLEAN SO SPERO LO FACCIA ANCHE A VOI. GG
+N.B: Sarà necessario cambiare dati di accesso al DB e directory di upload nel web.xml file.

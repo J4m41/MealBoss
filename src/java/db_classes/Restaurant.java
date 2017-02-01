@@ -120,6 +120,9 @@ public class Restaurant implements Serializable{
      * @return
      */
     public String getSinglePhotoPath() {
+        if(photoPath == null){
+            return "NONE";
+        }
         return photoPath[0];
     }
     

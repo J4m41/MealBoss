@@ -29,7 +29,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 /**
- *
+ * Funzione di controller nel paradigma di programmazione MVC
  * @author gianma
  */
 public class DBManager implements Serializable {
@@ -88,20 +88,18 @@ public class DBManager implements Serializable {
                     return null;
                 }
             } finally{
-                //Ricordarsi SEMPRE di chiudere i ResultSet in un blocco finally
                 rs.close();
             }
         } finally{
-            //Ricordarsi SEMPRE di chiudere i PreparedStatement in un blocco finally
             stm.close();
         }
     }
     /**
      * 
      * @param firstname dati registrazione
-     * @param lastname
-     * @param username
-     * @param password
+     * @param lastname dati registrazione
+     * @param username dati registrazione
+     * @param password dati registrazione
      * @return true se registrazione andata a buon fine, false altrimenti
      * @throws SQLException 
      */
@@ -168,6 +166,12 @@ public class DBManager implements Serializable {
         
     }
     
+    /**
+     *
+     * @param pw1 password to be changed 1
+     * @param pw2 password to be changed confirm
+     * @return true if equals
+     */
     public boolean badPassword(String pw1, String pw2){
         
         if(!pw1.equals(pw2)){
@@ -294,6 +298,10 @@ public class DBManager implements Serializable {
                 if(rsp.next()){
                     tmp.setSinglePhotoPath(rsp.getString("path"));
                 }
+                psp.close();
+                rsp.close();
+                psh.close();
+                rsh.close();
                 rst.close();
                 pst.close();  
                 
@@ -309,16 +317,27 @@ public class DBManager implements Serializable {
         
     }
     
-        //chiamata quando si effettua un commento
+    /**
+     *
+     * @param user id that adds the comment
+     * @param restaurant being commented
+     * @param rating given value 1-5
+     * @param ora timestap of the review
+     * @param title of the review
+     * @param description of the review
+     * @param img of the review
+     * @return the id of the review
+     * @throws SQLException
+     */
     public int addReviewPerRestaurant(int user,int restaurant,int rating,Timestamp ora,String title,String description,int img) throws SQLException{
-        System.out.println("sono entrato nela query");
+    
         String query = "INSERT INTO reviews(id,title,global_value,description,date_creation,id_restaurant,id_creator,id_photo,likes) "
                 + "VALUES (?,?,?,?,?,?,?,?,?);";
         PreparedStatement ps = con.prepareStatement(query);
         int next_id = 0;
+        
         try{
             //query to get the next free id for restaurant
-            
             String query1 = "SELECT MAX(id) FROM REVIEWS";
             PreparedStatement ps1 = con.prepareStatement(query1);
             ResultSet rs1 = ps1.executeQuery();
@@ -326,7 +345,6 @@ public class DBManager implements Serializable {
                 next_id = rs1.getInt(1) + 1;
             }
             rs1.close();
-            System.out.println("sto settando query");
             
             ps.setInt(1,next_id);
             ps.setString(2,title);
@@ -340,22 +358,26 @@ public class DBManager implements Serializable {
             ps.setInt(8,1);
             ps.setInt(9,0);
             try{
-            ResultSet result = ps.executeQuery();
+                ps.executeQuery();
             }catch(SQLException e){
                 System.out.println(e.toString());
             }
             ps.close();
         }catch(Exception e){
+            System.out.println(e.toString());
         }
         return next_id;
-        
     }
     
-    //ritorna recensioni
+    /**
+     *
+     * @param restaurant to get reviews
+     * @return reviews of the given restaurant
+     * @throws SQLException
+     */
     public ArrayList<Review> getReviewPerRestaurant(String restaurant) throws SQLException{
-        
+       
         ArrayList<Review> restaurantReviews = new ArrayList<>();
-        
         String query1 = "SELECT id FROM RESTAURANTS WHERE name = ?";
         PreparedStatement ps1 = con.prepareStatement(query1);
         ps1.setString(1, restaurant);
@@ -380,18 +402,23 @@ public class DBManager implements Serializable {
             rev.setUser(rs.getInt(7));
             rev.setImg(rs.getInt(8));
             restaurantReviews.add(rev);
-            //rs.next();
         }
         
         return restaurantReviews;
         
     }
+
+    /**
+     *
+     * @param revId id of the review to update likes
+     * @param value of the like (positive-negative)
+     * @throws SQLException
+     */
     public void updateReviewLikes(int revId, int value) throws SQLException{
         
         String qquery = "SELECT likes FROM reviews WHERE id = ?";
         PreparedStatement psdb = con.prepareStatement(qquery);
         psdb.setInt(1,revId);
-        System.out.println("debug +++++ "+value);
         ResultSet rss = psdb.executeQuery();
         int like = 0;
         if(rss.next())
@@ -401,7 +428,6 @@ public class DBManager implements Serializable {
             like+=1;
         else
             like-=1;
-        System.out.println("likes attuali: "+like);
         String query = "UPDATE reviews SET likes = ? WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(query);
         ps.setInt(1, like);
@@ -415,7 +441,15 @@ public class DBManager implements Serializable {
         }
         
     }
-    //l' user ha fatto un azione, idNotified è colui che riceve la notifica
+    
+    /**
+     *
+     * @param user that does something
+     * @param idNotified id of the user that receive notification
+     * @param idReview id of the review that triggers notification
+     * @param type of the notification
+     * @throws SQLException
+     */
     public void notifyUser(int user,int idNotified,int idReview,int type) throws SQLException{
         
         String insertQuery = "INSERT INTO notifications(id,id_notifier,id_notified,type,description,id_review,id_photo) "+
@@ -473,12 +507,19 @@ public class DBManager implements Serializable {
                     break;
         }
         try{
-        ResultSet rs = ps.executeQuery();
+        ps.executeQuery();
         }catch(SQLException e){
-            System.out.println("wow   "+e.toString());
+            System.out.println(e.toString());
         }
+        ps.close();
     };
     
+    /**
+     *
+     * @param restaurant of the owner id returned
+     * @return the id of the restaurant' owner
+     * @throws SQLException
+     */
     public int getOwnerId(int restaurant) throws SQLException{
         int id = 0;
         String query = "SELECT id_owner FROM restaurants WHERE id = ?";
@@ -490,6 +531,12 @@ public class DBManager implements Serializable {
         return id;
     };
     
+    /**
+     *
+     * @param revId id of who the review
+     * @return the id of the review creator
+     * @throws SQLException
+     */
     public int getReviewrId(int revId) throws SQLException{
         int id = 0;
         String query = "SELECT id_creator FROM reviews WHERE id = ?";
@@ -501,6 +548,12 @@ public class DBManager implements Serializable {
         return id;
     };
     
+    /**
+     *
+     * @param user id
+     * @return all notification of the give user id
+     * @throws SQLException
+     */
     public ArrayList<Notification> getNotificationPerUser(int user) throws SQLException{
         
         ArrayList<Notification> notifiche = new ArrayList<>();
@@ -524,6 +577,13 @@ public class DBManager implements Serializable {
         return notifiche;
     
     }
+
+    /**
+     *
+     * @param id user
+     * @return name of the user id
+     * @throws SQLException
+     */
     public String getUsernameFromId(int id) throws SQLException{
         String username = null;
         String query = "SELECT username FROM users WHERE id = ?";
@@ -534,6 +594,12 @@ public class DBManager implements Serializable {
             username = rs.getString(1);
         return username;
     }
+
+    /**
+     *
+     * @param id of the notification to be validated
+     * @throws SQLException
+     */
     public void validateNotification(int id) throws SQLException{
         String query = "UPDATE notifications SET validated = true WHERE id= ?";
         PreparedStatement ps = con.prepareStatement(query);
@@ -543,11 +609,11 @@ public class DBManager implements Serializable {
     }
     /**
      *
-     * @param target
-     * @param byName
-     * @param byPlace
-     * @param byCuisine
-     * @return
+     * @param target text from the input search bar
+     * @param byName true if search by name checkbox
+     * @param byPlace true if search by place checkbox
+     * @param byCuisine true if search by cuisine types checkbox
+     * @return a list of restaurant found
      * @throws java.sql.SQLException
      */
     public ArrayList <Restaurant> searchRestaurants(String target, boolean byName, boolean byPlace, boolean byCuisine) throws SQLException{
@@ -653,6 +719,12 @@ public class DBManager implements Serializable {
         return finalResults;
     }
     
+    /**
+     *
+     * @param name of the restaurant
+     * @return the id of the restaurant
+     * @throws SQLException
+     */
     public int getRestaurantId(String name) throws SQLException{
         int id = 0;
         String query = "SELECT id FROM restaurants WHERE name = ?";
@@ -667,9 +739,9 @@ public class DBManager implements Serializable {
     /**
      *
      * @param restaurant that needs to be added to DB
-     * @param creator_id
-     * @param isOwner
-     * @return
+     * @param creator_id id of the creator user
+     * @param isOwner true if creator is also the owner
+     * @return true if the restaurant was added
      */
     public boolean addRestaurant(Restaurant restaurant, int creator_id, boolean isOwner){
         
@@ -894,7 +966,9 @@ public class DBManager implements Serializable {
             
             JSONObject tba_restaurant = new JSONObject();
             tba_restaurant.put("name", restaurant.getName());
-            tba_restaurant.put("place", restaurant.getCity());
+            tba_restaurant.put("place", restaurant.getAddress()+" "+restaurant.getCivicNumber()+" "+restaurant.getCity());
+            tba_restaurant.put("photo", restaurant.getSinglePhotoPath());
+            tba_restaurant.put("descr", restaurant.getDescription());
             JSONObject tba_coords = new JSONObject();
             tba_coords.put("lat", coordinates[0]);
             tba_coords.put("lng", coordinates[1]);
@@ -917,7 +991,7 @@ public class DBManager implements Serializable {
     
     /**
      *
-     * @param username
+     * @param username the needs to change password
      * @param password the new password
      * @return true/false depending on success/fail
      */
@@ -941,10 +1015,10 @@ public class DBManager implements Serializable {
     
     /**
      *
-     * @param address
-     * @param civic
-     * @param city
-     * @return
+     * @param address of the restaurant
+     * @param civic of the restaurant
+     * @param city of the restaurant
+     * @return coordinates of the restaurant
      * @throws java.io.IOException
      * @throws org.json.simple.parser.ParseException
      */
