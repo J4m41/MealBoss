@@ -140,20 +140,31 @@ function initSuggested(){
                 });
                 
             });
-            
+            var windowWidth = $(window).width();
+            $(document).width(windowWidth);
+            console.log(windowWidth);
             suggestions.sort(function(a,b){
                                 return a.distance - b.distance;
                             });
-            for(var k = 0; k < suggestions.length; k++){
-                var formattedImg = "<td><img id=\"suggested-img\" src=\""+suggestions[k].photo+"\"></td>";
-                var formattedData = "<td id=\"sugg-data\"><h1><a href=\"#\">"+suggestions[k].name+"</a></h1>"
-                                    +"<p>"+suggestions[k].place+"</p>"
-                                    +"<p>"+suggestions[k].descr+"</p>"
-                                    +"<p><b>Distance:</b> "+suggestions[k].distance.toFixed(1)+" km</p></td>";
-                $("#suggested-img").append(formattedImg);
-                $("#suggested-data").append(formattedData);
+            if (windowWidth > 500){
+                for(var k = 0; k < suggestions.length; k++){
+                    var formattedImg = "<td><img id=\"suggested-img\" src=\""+suggestions[k].photo+"\"></td>";
+                    var formattedData = "<td id=\"sugg-data\"><h1><a href=\"#\">"+suggestions[k].name+"</a></h1>"
+                                        +"<p>"+suggestions[k].place+"</p>"
+                                        +"<p>"+suggestions[k].descr+"</p>"
+                                        +"<p><b>Distance:</b> "+suggestions[k].distance.toFixed(1)+" km</p></td>";
+                    $("#suggested-img").append(formattedImg);
+                    $("#suggested-data").append(formattedData);
+                }
+            }else{
+                var formattedImg = "<td><img id=\"suggested-img\" src=\""+suggestions[0].photo+"\"></td>";
+                var formattedData = "<td id=\"sugg-data\"><h1><a href=\"#\">"+suggestions[0].name+"</a></h1>"
+                                        +"<p>"+suggestions[0].place+"</p>"
+                                        +"<p>"+suggestions[0].descr+"</p>"
+                                        +"<p><b>Distance:</b> "+suggestions[0].distance.toFixed(1)+" km</p></td>";
+                    $("#suggested-img").append(formattedImg);
+                    $("#suggested-data").append(formattedData);
             }
-            
         });
     };
 

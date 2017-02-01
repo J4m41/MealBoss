@@ -40,6 +40,18 @@
         <servlet-class>servlets.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ValuateReview</servlet-name>
+        <servlet-class>servlets.ValuateReview</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ValidateNotification</servlet-name>
+        <servlet-class>servlets.ValidateNotification</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserProfile</servlet-name>
+        <servlet-class>servlets.UserProfile</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>AddRestaurant</servlet-name>
         <servlet-class>servlets.AddRestaurant</servlet-class>
         <init-param>
@@ -90,6 +102,18 @@
     <servlet-mapping>
         <servlet-name>PwChangeServlet</servlet-name>
         <url-pattern>/PwChangeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ValuateReview</servlet-name>
+        <url-pattern>/ValuateReview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ValidateNotification</servlet-name>
+        <url-pattern>/ValidateNotification</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserProfile</servlet-name>
+        <url-pattern>/UserProfile</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

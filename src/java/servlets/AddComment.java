@@ -65,7 +65,7 @@ public class AddComment extends HttpServlet {
             System.out.println("porcoddio");
             try{
                
-            manager.notifyUser(user.getId(), restaurantOwner,idReview , 0, "");
+            manager.notifyUser(user.getId(), restaurantOwner,idReview , 0);
             }catch(SQLException e){
                 System.out.println(e.toString());
             }

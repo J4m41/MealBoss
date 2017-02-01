@@ -32,21 +32,17 @@
                     <li><a href="index.jsp">Home</a></li>
                     <li><a href="login_page.jsp">Sign in</a></li>
                     <li><a href="signup_page.jsp">Sign up</a></li>
-                    <li><a href="#">Services</a></li>
                     <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
                 </ul>
             </c:if>
             <c:if test="${sessionScope.user != null}">
                 <ul class="menu">
-                    <li>Welcome back <c:out value="${sessionScope.user.firstname}"></c:out></li>
+                    <li><p> Welcome back <c:out value="${sessionScope.user.firstname}"></c:out><p></li>
                     <li><a href="index.jsp">Home</a></li>
-                    <li><a href="profile_page.jsp">My profile</a></li>
-                    <li><a href="#">My notifications</a></li>
+                    <li><a href="UserProfile">My profile</a></li>
                     <li><a href="#">My restaurants</a></li>
-                    <li><a href="#">Services</a></li>
+                    <li><a href="addRestaurant_page.jsp">Add restaurant</a></li>
                     <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
                     <li><a href="<%=request.getContextPath()%>/LogoutServlet">Logout</a></li>
                 </ul>
             </c:if>

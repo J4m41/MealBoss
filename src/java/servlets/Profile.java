@@ -10,6 +10,7 @@ import db_classes.Restaurant;
 import db_classes.Review;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -42,6 +43,7 @@ public class Profile extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
@@ -51,7 +53,7 @@ public class Profile extends HttpServlet {
         //prendo il nome del ristorante passato come parametro
         String tmp = request.getParameter("name");
         String restName = tmp.replaceAll("_", " ");
-                
+        
         out.println("<html><head><title>"+restName+"</title>");
         request.getRequestDispatcher("header.jsp").include(request, response);
         Restaurant res_tmp = manager.getRestaurant(restName);
@@ -88,15 +90,62 @@ public class Profile extends HttpServlet {
         //qui ci metto descrizione ristorante + stelline
         out.println("<div class=\"container\"><div class=col-md-2></div>");
         
-        out.println("<div class=col-md-8>");
+        out.println("<div class=col-md-4>");
 
         //qua descrizione
-        out.println(res_tmp.getDescription()
-        +"<br><h3>Oradi di apertura:</h3> 11:30 - 14:00 // 18:00 - 23:00"
-        +"<br><h3>Prices:"
-        +"<br><h3>Where are we:<br></h3>");
-        //qui andrebbe mappa
-           
+        out.println("<p>"+res_tmp.getDescription()+"</p>"
+        +"<br><h3>Oradi di apertura:</h3>");
+        if(res_tmp.getWeek().isMonday()){
+            out.println("<p>Monday: "+res_tmp.getWeek().getMonday_l_op()+" to "+res_tmp.getWeek().getMonday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getMonday_d_op()+" to "+res_tmp.getWeek().getMonday_d_cl()+"</p>");
+        }
+        if(res_tmp.getWeek().isTuesday()){
+            out.println("<p>Tuesday: "+res_tmp.getWeek().getTuesday_l_op()+" to "+res_tmp.getWeek().getTuesday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getTuesday_d_op()+" to "+res_tmp.getWeek().getTuesday_d_cl()+"</p>");
+        }
+        if(res_tmp.getWeek().isWednesday()){
+            out.println("<p>Wednesday: "+res_tmp.getWeek().getWednesday_l_op()+" to "+res_tmp.getWeek().getWednesday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getWednesday_d_op()+" to "+res_tmp.getWeek().getWednesday_d_cl()+"</p>");
+        }
+        if(res_tmp.getWeek().isThursday()){
+            out.println("<p>Thursday: "+res_tmp.getWeek().getThursday_l_op()+" to "+res_tmp.getWeek().getThursday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getThursday_d_op()+" to "+res_tmp.getWeek().getThursday_d_cl()+"</p>");
+        }
+        if(res_tmp.getWeek().isFriday()){
+            out.println("<p>Friday: "+res_tmp.getWeek().getFriday_l_op()+" to "+res_tmp.getWeek().getFriday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getFriday_d_op()+" to "+res_tmp.getWeek().getFriday_d_cl()+"</p>");
+        }
+        if(res_tmp.getWeek().isSaturday()){
+            out.println("<p>Saturday: "+res_tmp.getWeek().getSaturday_l_op()+" to "+res_tmp.getWeek().getSaturday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getSaturday_d_op()+" to "+res_tmp.getWeek().getSaturday_d_cl()+"</p>");
+        }
+        if(res_tmp.getWeek().isSunday()){
+            out.println("<p>Sunday: "+res_tmp.getWeek().getSunday_l_op()+" to "+res_tmp.getWeek().getSunday_l_cl()+""
+                    + " - "+res_tmp.getWeek().getSunday_d_op()+" to "+res_tmp.getWeek().getSunday_d_cl()+"</p>");
+        }
+        out.println("</div><div class=\"col-md-4\">");
+        out.println("<br><h3>Cuisines:</h3>");
+        for(int i = 0; i < res_tmp.getCuisineTypes().length; i++){
+            out.println(res_tmp.getCuisineTypes()[i]);
+            if(i < res_tmp.getCuisineTypes().length - 1 ){
+                out.println(", ");
+            }
+        }
+        
+        out.println("<br><h3>Prices:</h3>");
+        if(res_tmp.getPrice() == 1){
+            out.println("<p>Low(<10&euro;)</p>");
+        }else if(res_tmp.getPrice() == 2){
+            out.println("<p>Medium(~20&euro;)</p>");
+        }else if(res_tmp.getPrice() == 3){
+            out.println("<p>Low(>30&euro;)</p>");
+        }
+        
+        out.println("<br><h3>Where are we:<br></h3>");
+        String address = res_tmp.getAddress()+" "+res_tmp.getCivicNumber()+" "+res_tmp.getCity();
+        out.println("<p><a href=\"https://www.google.it/maps/?q="+URLEncoder.encode(address, "utf-8")+"\" target=\"_blank\">"
+                +res_tmp.getAddress()+", "+res_tmp.getCivicNumber()+", "+res_tmp.getCity()+ "</a></p>");
+        out.println("</div><div class=col-md-2></div></div>");   
         
         out.println("<hr><div class=\"container\"><div class=\"col-md-2\"></div>"
                 + "<div class=\"col-md-8\">");
@@ -114,12 +163,12 @@ public class Profile extends HttpServlet {
                             "<input type=\"radio\" name=\"group-2\" id=\"group-2-2\" value=\"3\" /><label for=\"group-2-2\"></label>"+
                             "<input type=\"radio\" name=\"group-2\" id=\"group-2-3\" value=\"2\" /><label for=\"group-2-3\"></label>"+
                             "<input type=\"radio\" name=\"group-2\" id=\"group-2-4\"  value=\"1\" /><label for=\"group-2-4\"></label>"+
-                        "</div>"
+                        "</div><br>"
                     
                     + "Title: <input type=\"text\" id=\"title\" class=\"form-control\" name=\"title\"/><br>"
-                    + "<textarea class=\"form-control\" rows=\"4\" cols=\"50\" type=\"text\" name=\"description\"></textarea>"
-                    + "<input type=\"file\" name=\"image\" accept=\"image/*\">"
-                    + "<button type=\"submit\">Add review</button>");
+                    + "Description: <textarea class=\"form-control\" rows=\"4\" cols=\"50\" type=\"text\" name=\"description\"></textarea><br>"
+                    + "Photo: <input class=\"form-control\" type=\"file\" name=\"image\" accept=\"image/*\"><br>"
+                    + "<button class=\"btn btn-submit\" type=\"submit\">Add review</button>");
             out.println("</form>");
             HttpSession session = request.getSession(false);
             session.setAttribute("RestName", restName);
@@ -138,9 +187,9 @@ public class Profile extends HttpServlet {
         //elenco review per ristoranti
         ArrayList<Review> reviews = manager.getReviewPerRestaurant(restName);
 
-        out.println("<div class=\"row col-md-8 col-md-offset-2\">");
-        int i =0;
-        for(i=0;i<reviews.size();i++){
+        out.println("<div class=\"col-md-2\"></div><div class=\"col-md-8\">");
+        
+        for(int i = 0; i < reviews.size(); i++){
             out.println("<hr><h4>"+reviews.get(i).getTitle()+"</h4><br>");
             out.println(reviews.get(i).getDescription());
             out.println("<br>Rating: "+reviews.get(i).getRating());
@@ -149,7 +198,7 @@ public class Profile extends HttpServlet {
                     + "<a href=\"ValuateReview?value=1&revId="+reviews.get(i).getId()+"\">Yes</a>"
                     + "<a href=\"ValuateReview?value=0&revId="+reviews.get(i).getId()+"\">No</a>");
         }
-        out.println("</div>");
+        out.println("</div><div class=\"col-md-2\"></div>");
         
         out.println("<script src=\"media/js/scripts.js\"></script>");
         

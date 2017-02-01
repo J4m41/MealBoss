@@ -14,12 +14,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -74,10 +72,8 @@ public class ShowResults extends HttpServlet {
             if(!searched_res.isEmpty()){
                 
                 for(int i = 0; i<searched_res.size();i++){ 
-                        HttpSession session = request.getSession(false);
                         String newName = searched_res.get(i).getName();
-                        String tmp = new String();
-                        tmp = newName.replaceAll("\\s+","_");
+                        String tmp = newName.replaceAll("\\s+","_");
                         out.println("<tr>"
                                 + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getSinglePhotoPath()+"\" id=\"results-img\"></td>");
                         out.println("<td><ul><h1><a href=\""+request.getContextPath()+"/Profile?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");

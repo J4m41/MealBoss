@@ -12,10 +12,12 @@ package db_classes;
 public class Notification {
     private int id;
     private int notified_id;
+    private int notifier_id;
     private int type;
     private String description;
     private int review_id;
     private int photo_id;
+    private boolean validated;
 
     /**
      * @return the id
@@ -99,6 +101,34 @@ public class Notification {
      */
     public void setPhoto_id(int photo_id) {
         this.photo_id = photo_id;
+    }
+
+    /**
+     * @return the validated
+     */
+    public boolean isValidated() {
+        return validated;
+    }
+
+    /**
+     * @param validated the validated to set
+     */
+    public void setValidated(boolean validated) {
+        this.validated = validated;
+    }
+
+    /**
+     * @return the notifier_id
+     */
+    public int getNotifier_id() {
+        return notifier_id;
+    }
+
+    /**
+     * @param notifier_id the notifier_id to set
+     */
+    public void setNotifier_id(int notifier_id) {
+        this.notifier_id = notifier_id;
     }
     
 }

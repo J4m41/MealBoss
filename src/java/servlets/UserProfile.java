@@ -6,10 +6,12 @@
 package servlets;
 
 import db_classes.DBManager;
+import db_classes.Notification;
 import db_classes.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -21,8 +23,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author leonardo
  */
-public class ValuateReview extends HttpServlet {
-
+public class UserProfile extends HttpServlet {
+    
     private DBManager manager;
     
     @Override
@@ -38,40 +40,57 @@ public class ValuateReview extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            request.getRequestDispatcher("header.jsp").include(request, response);
-            out.println("<body>");
-            out.println("<h1>Thank for your review</h1>");
-            int value = Integer.parseInt(request.getParameter("value"));
-            int id = Integer.parseInt(request.getParameter("revId"));
-            System.out.println(value);
-            int tmp = 0;
-            if(value == 0){
-                tmp = 0;
-            }if(value==1){
-                tmp = 1;
+        
+        User user = (User) request.getSession().getAttribute("user");
+        PrintWriter out = response.getWriter();
+        
+        out.println("<html><head><title>"+user.getUsername()+"</title>");
+        request.getRequestDispatcher("header.jsp").include(request, response);
+        
+        out.println("<div class=\"jumbotron\" id=\"jumbo-res\" >");
+        out.println("<h1 id=\"profile-res-title\">"+user.getFirstname()+" "+user.getLastname()+"</h1></div>");
+        out.println("<div class=\"row\">");
+            //qua vanno gli stat utente
+            out.println("<div class=\"col-md-4 col-md-offset-2\">"
+                    + "<h3>Username: </h3>"+user.getUsername()
+                    + "<h3>eMail: </h3>"+user.getUsername()
+                    + "</div>");
+            //qua vanno le notifiche utente
+            ArrayList<Notification> notifiche = new ArrayList<>();
+            notifiche = manager.getNotificationPerUser(user.getId());
+            out.println("<div class=\"col-md-4 col-md-offset-6\">");
+            for(int i = 0;i<notifiche.size();i++){
+                String tipoNotifica = null;
+                if(notifiche.get(i).getType()==0){
+                    tipoNotifica = "commento semplice";
+                }
+                if(notifiche.get(i).getType()==1){
+                    tipoNotifica = "commento con foto";
+                }if(notifiche.get(i).getType()==2){
+                    tipoNotifica = "una segnalazione alla foto";
+                }if(notifiche.get(i).getType()==3){
+                    tipoNotifica = "una risposta alla recensione";
+                }if(notifiche.get(i).getType()==4){
+                    tipoNotifica = "like al tuo commento";
+                }
+                out.println("<hr><div>"
+                        + "L' utente "+manager.getUsernameFromId(notifiche.get(i).getNotifier_id())
+                        + " Ha eseguito "+tipoNotifica
+                        + "<br>"
+                        + "ID review = <a href=\"ValidateNotification?id="+notifiche.get(i).getId()+"\">"+notifiche.get(i).getId()+"</a>"
+                        + "</div>");
             }
-            manager.updateReviewLikes(id, tmp);
-            User user = (User) request.getSession().getAttribute("user");
-                
-            int reviewerId = manager.getReviewrId(id);
-            
-            manager.notifyUser(user.getId(), reviewerId, id , 4);
-            out.println("<script src=\"media/js/scripts.js\"></script></body>");
-            out.println("</html>");
-        }
+            out.println("</div>");
+        out.println("</div>");
+        out.println("<script src=\"media/js/scripts.js\"></script></body></html>");
+
+        
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -86,7 +105,7 @@ public class ValuateReview extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(ValuateReview.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserProfile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -104,7 +123,7 @@ public class ValuateReview extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(ValuateReview.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserProfile.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
