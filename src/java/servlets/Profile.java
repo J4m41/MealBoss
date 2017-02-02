@@ -56,7 +56,6 @@ public class Profile extends HttpServlet {
         out.println("<html><head><title>"+restName+"</title>");
         request.getRequestDispatcher("header.jsp").include(request, response);
         Restaurant res_tmp = manager.getRestaurant(restName);
-        System.out.println(request.getContextPath()+"/"+res_tmp.getSinglePhotoPath());
         out.println("<div class=\"col-md-1\"></div><div class=\"col-md-10\"><div class=\"container-fluid\"><div class=\"jumbotron\" id=\"jumbo-res\" style=\"background-image: url(../"+request.getContextPath()+"/"+res_tmp.getSinglePhotoPath()+");\">");
         out.println("<h1 id=\"profile-res-title\">"+res_tmp.getName().replace('*', '\'')+"</h1>");
         
@@ -181,7 +180,7 @@ public class Profile extends HttpServlet {
             //se è loggato allora ha l' opportunità di commentare e mettere le stelline
 
             //qua invece è il commento vero e proprio
-            out.println("<form action=\"AddComment\" type=\"post\">"
+            out.println("<form enctype=\"multipart/form-data\" action=\"AddComment\" method=\"post\">"
                     + "<label for=\"comment\">Add a review for this restaurant</label><br>"
                     //le stelline
                     +"<div name=\"rating\" class=\" acidjs-rating-stars\">"+
@@ -195,7 +194,7 @@ public class Profile extends HttpServlet {
                     
                     + "Title: <input type=\"text\" id=\"title\" class=\"form-control\" name=\"title\"/><br>"
                     + "Description: <textarea class=\"form-control\" rows=\"4\" cols=\"50\" type=\"text\" name=\"description\"></textarea><br>"
-                    + "Photo: <input class=\"form-control\" type=\"file\" name=\"image\" accept=\"image/*\"><br>"
+                    + "Photo: <input class=\"form-control\" type=\"file\" name=\"image\"><br>"
                     + "<button class=\"btn btn-submit\" type=\"submit\">Add review</button>");
             out.println("</form>");
             HttpSession session = request.getSession(false);
@@ -222,6 +221,13 @@ public class Profile extends HttpServlet {
             int review_rating = reviews.get(i).getRating();
             String reviewer_name = manager.getName(reviewer_id);
             out.println("<hr><h4>"+reviewer_name+" reviewed this restaurant:</h4>");
+            int photoId = reviews.get(i).getImg();
+            if(photoId != 0){
+                String path = manager.getPhoto(photoId);
+                out.println("<div id=\"rev-img\"><img id=\"rev-img\" src=\""+request.getContextPath()+"/"+path+"\"></div>");
+                System.out.println(request.getContextPath()+"/"+path);
+            }
+            
             out.println("<div name=\"rating\" class=\"acidjs-rating-stars acidjs-rating-disabled\">"+
                     "<form>");
             switch (review_rating){
@@ -264,7 +270,11 @@ public class Profile extends HttpServlet {
             out.println("</form></div>");
             out.println("<br><p><b>"+reviews.get(i).getTitle()+"</b></p>");
             out.println("<p>"+reviews.get(i).getDescription()+"</p>");
-            
+            String reply = manager.getReplyPerReview(reviews.get(i).getId());
+            if (reply != null){
+                out.println("<br><h5 id=\"reply-txt\"><b>Restaurant owner replied:</b></h5>");
+                out.println("<p id=\"reply-txt\">"+reply+"</p>");
+            }
             
             
         }

@@ -62,7 +62,7 @@ public class UserProfile extends HttpServlet {
             //qua vanno le notifiche utente
             ArrayList<Notification> notifiche = new ArrayList<>();
             notifiche = manager.getNotificationPerUser(user.getId());
-            out.println("<div class=\"col-md-4 col-md-offset-6\">");
+            out.println("<div class=\"col-md-4 col-md-offset-6\"><h3>Notifications</h3>");
             for(int i = 0;i<notifiche.size();i++){
                 String tipoNotifica = null;
                 if(notifiche.get(i).getType()==0){
@@ -78,15 +78,22 @@ public class UserProfile extends HttpServlet {
                     tipoNotifica = "like al tuo commento";
                 }
                 out.println("<hr><div>"
-                        + "L' utente "+manager.getUsernameFromId(notifiche.get(i).getNotifier_id())
-                        + " Ha eseguito "+tipoNotifica
-                        + "<br>"
-                        + "ID review = <a href=\"ValidateNotification?id="+notifiche.get(i).getId()+"\">"+notifiche.get(i).getId()+"</a>"
-                        + "</div>");
+                        + manager.getUsernameFromId(notifiche.get(i).getNotifier_id())
+                        + notifiche.get(i).getDescription()
+                        + "<br>");
+                System.out.println("tipo di notifica "+notifiche.get(i).getType());
+                if(notifiche.get(i).getType()==1){ //aka si tratta di commento con foto e puo essere segnalata
+                    out.println("Segnala foto della review id: <a href=\"photo_segnalation.jsp?id="+notifiche.get(i).getId()+"\">"+notifiche.get(i).getId()+"</a>");
+                }
+                else{
+                    out.println("ID review = <a href=\"ValidateNotification?id="+notifiche.get(i).getId()+"&type="+notifiche.get(i).getType()+"\">"+notifiche.get(i).getId()+"</a>");
+                }
+                out.println("</div>");
             }
             out.println("</div>");
         out.println("</div>");
-        out.println("<script src=\"media/js/scripts.js\"></script></body></html>");
+        out.println("<script src=\"media/js/scripts.js\"></script>");
+        out.println("</body></html>");
 
         
     }

@@ -1,10 +1,9 @@
 <%-- 
-    Document   : login_page
-    Created on : 28-set-2016, 14.27.53
-    Author     : gianma
+    Document   : index
+    Created on : 26-set-2016, 13.05.16
+    Author     : leonardo
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -23,6 +22,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="media/css/styles.css">
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
@@ -60,12 +60,14 @@
                         <input type="text" id="search_bar" name="search_bar" class="form-control" placeholder="Search">
 
                         <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            <button type="button" id="searchby-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">Search by <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a><input type="checkbox" checked="true" name="search_names" value="true" id="search_names"> Names</a></li>
-                                <li><a><input type="checkbox" name="search_places" value="true" id="search_places"> Places</a></li>
-                                <li><a><input type="checkbox" name="search_cuisines" value="true" id="search_cuisines"> Cuisine types</a></li>
+                                <li><a><input type="checkbox" checked="true" id="search_names" name="search_names" value="true"> Names</a></li>
+                                <li><a><input type="checkbox" id="search_places" name="search_places" value="true"> Places</a></li>
+                                <li><a><input type="checkbox" id="search_cuisines" name="search_cuisines" value="true"> Cuisine types</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
                             </ul>
                         </div>
 
@@ -78,48 +80,41 @@
             <div class="col-md-2"><a href="index.jsp"><img id="icon" src="<%=request.getContextPath()%>/media/images/MealBoss_icon.png" alt="icon"></a></div>
             
         </nav>
-        
-        <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4">
-                <div class="container-fluid">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h3 class="panel-heading">Login</h3>
-                    </div>
-                    <div class="panel-body">
-                        <form action="LoginServlet" method="POST">
-                            <div class="container-fluid">
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label for="username">Username:</label>
-                                        <input type="text" id="username" name="username" class="form-control">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label for="pwd">Password:</label>
-                                        <input type="password" id="pwd" name="password" class="form-control">
-                                    </div>
-                                </div>
-                                <p><c:out value="${requestScope.message}"></c:out></p>
-                                <p><a href="pwrecover_page.jsp">Forgot your password?</a></p>
-                                <br>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <button class="btn btn-danger" type="submit">Login</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            </div>
-            <div class="col-md-4"></div>
+
+        <div class="jumbotron" id="home-jumbo">
+            <br>
+            <h1>Trova qui i migliori ristoranti</h1>
+            <p>Cerca una città, un ristorante o una tipologia di cucina</p>
+            <p>Controlliamo i risultati e li ordiniamo per te, in base al punteggio</p>
         </div>
+        
+            
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <h3><b>About MealBoss</b></h3>
+                <p>MealBoss è una piattaforma che aiuta l'utente a cercare ed a selezionare il locale che più gli aggrada.</p>
 
-        <script src="media/js/scripts.js"></script>
+                <p>Questo grazie all'opzione di una ricerca mirata nelle zone circostanti all'utente o semplicemente in una zona selezionata, 
+                    trammite una mappa che facilità la localizzazione dei ristoranti. Inoltre c'è la possibilità di cercare dei locali in base al tipo di cucina cercato 
+                    (africana, indiana, messicana, e molte altre) ed in base agli orari di apertura e di chiusura degli stessi.</p>
 
-</body>
+                <p>Per ogni locale ci sarà la possibilità di guardare il profilo, per ricavare maggiori informazioni come dei semplici dati quali la via ed il sito ufficiale o anche la possibilità 
+                    di guardare foto del ristorante, recensioni di altri utenti che sono stati in quel locale e la valutazione media, indicata da delle stelline.</p>
+
+                <p>C'è la possibilità di registrarsi nel sito, questo permetterebbe di valutare il ristorante o la pizzeria in cui si ha mangiato, utile per dare un resoconto più completo 
+                    di un tipo di locale ed aiutare altri utenti nella selezione. Inoltre un proprietario di uno o più ristoranti può selezionare l'opzione "Claim" 
+                    in modo tale da ricevere un feedback da parte di altri utenti tramite delle recensioni.</p>
+            </div>
+            <div class="col-md-1"></div>
+            
+            <div class="row"></div>
+        
+            <div class="col-md-1 col-sm-1 col-xs-0"></div>
+            <div class="col-md-10">  
+                <hr>
+                <p id="footer">@2016-2017 Programmazione per il Web | 404 Group Not Found</p>
+            </div>
+            <div class="col-md-1 col-sm-1 col-xs-0"></div>
+            <script src="media/js/scripts.js"></script>
+    </body>
 </html>

@@ -2,7 +2,7 @@
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <context-param>
         <param-name>dburl</param-name>
-        <param-value>jdbc:postgresql://localhost:5432/DBFoodSite</param-value>
+        <param-value>jdbc:postgresql://localhost:5432/DBFood</param-value>
     </context-param>
     <context-param>
         <param-name>dbpassword</param-name>
@@ -66,6 +66,10 @@
     <servlet>
         <servlet-name>AddComment</servlet-name>
         <servlet-class>servlets.AddComment</servlet-class>
+        <init-param>
+            <param-name>uploadDir</param-name>
+            <param-value>/home/gianma/NetBeansProjects/MealBoss/web/media/images</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>PwChangeServlet</servlet-name>

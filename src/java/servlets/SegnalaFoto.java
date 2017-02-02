@@ -6,7 +6,6 @@
 package servlets;
 
 import db_classes.DBManager;
-import db_classes.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -21,8 +20,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author leonardo
  */
-public class ValuateReview extends HttpServlet {
-
+public class SegnalaFoto extends HttpServlet {
+    
     private DBManager manager;
     
     @Override
@@ -38,37 +37,17 @@ public class ValuateReview extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            request.getRequestDispatcher("header.jsp").include(request, response);
-            out.println("<body>");
-            out.println("<h1>Thank for your review</h1>");
-            int value = Integer.parseInt(request.getParameter("value"));
-            int id = Integer.parseInt(request.getParameter("revId"));
-            System.out.println(value);
-            int tmp = 0;
-            if(value == 0){
-                tmp = 0;
-            }if(value==1){
-                tmp = 1;
-            }
-            manager.updateReviewLikes(id, tmp);
-            User user = (User) request.getSession().getAttribute("user");
-                
-            int reviewerId = manager.getReviewrId(id);
-            
-            manager.notifyUser(user.getId(), reviewerId, id , 4);
-            out.println("</body>");
-            out.println("</html>");
-        }
+        
+        int id = Integer.parseInt((String) request.getSession().getAttribute("id"));
+        
+        
+        manager.getReviewFromNotification(id);
+        request.getSession().removeAttribute("id");
+        response.sendRedirect("UserProfile");
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -86,7 +65,7 @@ public class ValuateReview extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(ValuateReview.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SegnalaFoto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -104,7 +83,7 @@ public class ValuateReview extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(ValuateReview.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SegnalaFoto.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

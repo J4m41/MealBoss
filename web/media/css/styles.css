@@ -141,6 +141,21 @@ body{
     height: 400px;
 }
 
+#footer{
+    font-size: 14px;
+    font-family: Verdana, sans-serif;
+    text-align: right;
+}
+
+#rev-img{
+    width: 130px;
+    height: 75px;
+}
+
+#reply-txt{
+    text-indent: 30px;
+}
+
 .ui-autocomplete { z-index:2000 !important; }
 
 .container-fluid {

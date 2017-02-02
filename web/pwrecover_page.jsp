@@ -32,7 +32,7 @@
                     <li><a href="index.jsp">Home</a></li>
                     <li><a href="login_page.jsp">Sign in</a></li>
                     <li><a href="signup_page.jsp">Sign up</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="about_page.jsp">About</a></li>
                 </ul>
             </c:if>
             <c:if test="${sessionScope.user != null}">
@@ -42,7 +42,7 @@
                     <li><a href="UserProfile">My profile</a></li>
                     <li><a href="#">My restaurants</a></li>
                     <li><a href="addRestaurant_page.jsp">Add restaurant</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="about_page.jsp">About</a></li>
                     <li><a href="<%=request.getContextPath()%>/LogoutServlet">Logout</a></li>
                 </ul>
             </c:if>

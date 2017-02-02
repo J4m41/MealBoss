@@ -73,7 +73,7 @@ public class ShowResults extends HttpServlet {
                         String newName = searched_res.get(i).getName();
                         String tmp = newName.replaceAll("\\s+","_");
                         out.println("<tr id=\"res-row\">"
-                                + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getPhotoPath()[0]+"\" id=\"results-img\"></td>");
+                                + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getSinglePhotoPath()+"\" id=\"results-img\"></td>");
                         out.println("<td><ul><h1><a href=\""+request.getContextPath()+"/Profile?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");
                         
                         String address = searched_res.get(i).getAddress()+" "+searched_res.get(i).getCivicNumber()+" "+searched_res.get(i).getCity();

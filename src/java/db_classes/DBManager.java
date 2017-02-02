@@ -18,11 +18,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.logging.Level;
+import listeners.EatItHereAppListener;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -45,6 +47,36 @@ public class DBManager implements Serializable {
         
         Connection con = DriverManager.getConnection(dburl, dbuser, dbpassword);
         this.con = con;
+        
+        try {
+            ArrayList <Restaurant> allRestaurants = getAllRestaurants();
+            ArrayList <Coords> coordinates = getAllCoords();
+            JSONParser parser = new JSONParser();
+            //Reading suggestions.json and gettin restaurants array
+            JSONObject json = (JSONObject) parser.parse(new FileReader("/home/gianma/NetBeansProjects/MealBoss/web/media/js/suggestions.json"));
+            JSONArray restaurants = (JSONArray) json.get("restaurants");
+            
+            for(int i = 0; i < allRestaurants.size(); i++){
+                JSONObject tba_restaurant = new JSONObject();
+                tba_restaurant.put("name", allRestaurants.get(i).getName());
+                tba_restaurant.put("place", allRestaurants.get(i).getAddress()+" "+allRestaurants.get(i).getCivicNumber()+" "+allRestaurants.get(i).getCity());
+                tba_restaurant.put("photo", allRestaurants.get(i).getSinglePhotoPath().replace("/home/gianma/NetBeansProjects/MealBoss/web/", ""));
+                tba_restaurant.put("descr", allRestaurants.get(i).getDescription());
+                JSONObject tba_coords = new JSONObject();
+                tba_coords.put("lat", coordinates.get(i).getLat());
+                tba_coords.put("lng", coordinates.get(i).getLng());
+                tba_restaurant.put("coords", tba_coords);
+
+                restaurants.add(tba_restaurant);
+            }
+            FileWriter file = new FileWriter("/home/gianma/NetBeansProjects/MealBoss/web/media/js/suggestions.json");
+            file.write(json.toJSONString());
+            file.flush();
+            file.close();
+            
+        } catch (IOException | ParseException ex) {
+            Logger.getLogger(EatItHereAppListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public static void shutdown(){
@@ -357,7 +389,7 @@ public class DBManager implements Serializable {
 
             ps.setInt(6,restaurant);
             ps.setInt(7,user);
-            ps.setInt(8,1);
+            ps.setInt(8,img);
             ps.setInt(9,0);
             try{
                 ps.executeQuery();
@@ -370,6 +402,128 @@ public class DBManager implements Serializable {
         }
         return next_id;
     }
+    
+    /**
+     *
+     * @param path
+     * @param restaurantId
+     * @param creatorId
+     * @return
+     * @throws java.sql.SQLException
+     */
+    public int addPhoto(String path, int restaurantId, int creatorId) throws SQLException{
+        int next_id = 0;
+        String query1 = "SELECT MAX(id) FROM photos";
+        PreparedStatement ps1 = con.prepareStatement(query1);
+        ResultSet rs1 = ps1.executeQuery();
+        if (rs1.next()){
+            next_id = rs1.getInt(1)+1;
+        }
+        
+        String query = "INSERT INTO photos VALUES (?,?,?,?)";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, next_id);
+        ps.setString(2, path.replace("/home/gianma/NetBeansProjects/MealBoss/web/", ""));
+        ps.setInt(3, restaurantId);
+        ps.setInt(4, creatorId);
+        int update = ps.executeUpdate();
+        
+        if(update == 1)
+            return next_id;
+        
+        return 0;
+    }
+    
+    /**
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+    public String getPhoto(int id) throws SQLException{
+        String query = "SELECT path FROM photos WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            return rs.getString(1);
+        }
+        
+        return null;
+    }
+    
+        public void validateNotification(int id) throws SQLException{
+        String query = "UPDATE notifications SET validated = true WHERE id= ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        int rs = ps.executeUpdate();
+        System.out.println("Righe affette: "+rs);
+    }
+    public void removeReview(int id) throws SQLException{
+        String query = "DELETE FROM reviews WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        int rs = 0;
+        try{
+        rs = ps.executeUpdate();
+        }catch(SQLException e){
+            System.out.println(e.toString());
+        }
+        System.out.println("righe affette review: "+rs+" id : "+id);
+    }
+    public void removeNotification(int id) throws SQLException{
+        String query = "DELETE FROM notifications WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        int rs = ps.executeUpdate();
+        System.out.println("righe affette notifiche: "+rs);
+        
+    }
+    public void getReviewFromNotification(int notificationId) throws SQLException{
+        int reviewId = 2;
+        System.out.println("id a questo punto: "+notificationId);
+        String query = "SELECT id_review FROM notifications WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, notificationId);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            reviewId = rs.getInt(1);
+            System.out.println("idddd: "+reviewId);
+        }
+        removeNotification(notificationId);
+        removeReview(reviewId);
+    }
+    
+    public void replyToReview(int notificationId,String reply,Timestamp ora,int userId) throws SQLException{
+        String query = "SELECT id_review FROM notifications WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1,notificationId);
+        ResultSet rs = ps.executeQuery();
+        int reviewId = 0;
+        if(rs.next()){
+            reviewId = rs.getInt(1);
+        }
+        String insertReply = "INSERT INTO replies(id,description,date_creation,id_review,id_owner)"
+                + "VALUES(?,?,?,?,?)";
+        PreparedStatement pss = con.prepareStatement(insertReply);
+        //prendo next int
+        int next_id = 0;
+        String query1 = "SELECT MAX(id) FROM replies";
+        PreparedStatement ps1 = con.prepareStatement(query1);
+        ResultSet rs1 = ps1.executeQuery();
+        while(rs1.next()){
+            next_id = rs1.getInt(1) + 1;
+        }
+        rs1.close();
+        //setto valori query
+        pss.setInt(1, next_id);
+        pss.setString(2, reply);
+        pss.setTimestamp(3, ora);
+        pss.setInt(4, reviewId);
+        pss.setInt(5, userId);
+        
+    }
+
     
     /**
      *
@@ -518,6 +672,24 @@ public class DBManager implements Serializable {
     
     /**
      *
+     * @param reviewId
+     * @return the text of the reply
+     * @throws java.sql.SQLException
+     */
+    public String getReplyPerReview(int reviewId) throws SQLException{
+        String replyText = null;
+        String query = "SELECT * FROM replies WHERE id_review = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, reviewId);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            replyText = rs.getString("description");
+        }
+        return replyText;
+    }
+    
+    /**
+     *
      * @param restaurant of the owner id returned
      * @return the id of the restaurant' owner
      * @throws SQLException
@@ -628,18 +800,6 @@ public class DBManager implements Serializable {
 
     /**
      *
-     * @param id of the notification to be validated
-     * @throws SQLException
-     */
-    public void validateNotification(int id) throws SQLException{
-        String query = "UPDATE notifications SET validated = true WHERE id= ?";
-        PreparedStatement ps = con.prepareStatement(query);
-        ps.setInt(1, id);
-        int rs = ps.executeUpdate();
-        System.out.println("Righe affette: "+rs);
-    }
-    /**
-     *
      * @param target text from the input search bar
      * @param byName true if search by name checkbox
      * @param byPlace true if search by place checkbox
@@ -725,7 +885,6 @@ public class DBManager implements Serializable {
                 int distance_city = (int)(lcs.distance(target, allResults.get(j).getCity()));
                 int distance_address = (int)(lcs.distance(target, allResults.get(j).getAddress()+" "+allResults.get(j).getCivicNumber()+" "+allResults.get(j).getCity()))/2;
                 if(distance_address <= 2 || distance_city <= 2){
-                    System.out.println(j);
                     if(!finalResults.contains(allResults.get(j))){
                         finalResults.add(allResults.get(j));
                     }
@@ -748,6 +907,68 @@ public class DBManager implements Serializable {
         }
         
         return finalResults;
+    }
+    
+    private ArrayList<Restaurant> getAllRestaurants() throws SQLException{
+        
+        ArrayList <Restaurant> allResults = new ArrayList();
+        
+        //Query to get all restaurants and their data
+        PreparedStatement ps1 = con.prepareStatement("SELECT * FROM restaurants");
+        ResultSet rs1 = ps1.executeQuery();
+        
+        while(rs1.next()){
+            Restaurant restaurant = new Restaurant();
+            //Restaurant data
+            restaurant.setId(rs1.getInt("id"));
+            restaurant.setName(rs1.getString("name"));
+            restaurant.setAddress(rs1.getString("address"));
+            restaurant.setCity(rs1.getString("city"));
+            restaurant.setCivicNumber(rs1.getInt("civic"));
+            restaurant.setDescription(rs1.getString("description"));
+            restaurant.setWebSiteUrl(rs1.getString("web_site_url"));
+            restaurant.setGlobal_value(rs1.getDouble("global_value"));
+            restaurant.setPrice(rs1.getInt("price_range"));
+            restaurant.setId_owner(rs1.getInt("id_owner"));
+            
+            //Restaurant cuisines
+            PreparedStatement ps2 = con.prepareStatement("SELECT c.name "
+                    + "FROM cuisines AS c INNER JOIN restaurant_cuisine AS rc "
+                    + "ON c.id = rc.id_cuisine WHERE rc.id_restaurant = ?");
+            ps2.setInt(1, rs1.getInt("id"));
+            ResultSet rs2 = ps2.executeQuery();
+            ArrayList <String> cuisines = new ArrayList<>();
+            while(rs2.next()){
+                cuisines.add(rs2.getString("name"));
+            }
+            
+            String [] restaurantCuisines = new String[cuisines.size()];
+            for(int h = 0; h < cuisines.size(); h++){
+                restaurantCuisines[h] = cuisines.get(h);
+            }
+            restaurant.setCuisineTypes(restaurantCuisines);
+            
+            
+            //The data collected is enough since user can search by names, places and cuisines
+            //Need to add also photo paths for the results
+            PreparedStatement ps3 = con.prepareStatement("SELECT path FROM photos WHERE id_restaurant = ?");
+            ps3.setInt(1, rs1.getInt("id"));
+            ResultSet rs3 = ps3.executeQuery();
+            ArrayList <String> paths = new ArrayList<>();
+            while(rs3.next()){
+                paths.add(rs3.getString("path"));
+            }
+            String [] restaurantPaths = new String [paths.size()];
+            for(int n = 0; n < paths.size(); n++){
+                restaurantPaths[n] = paths.get(n);
+            }
+            restaurant.setPhotoPath(restaurantPaths);
+            
+            allResults.add(restaurant);
+        }
+        
+        
+        return allResults;
     }
     
     /**
@@ -955,7 +1176,7 @@ public class DBManager implements Serializable {
             //query to insert photo
             PreparedStatement psp = con.prepareStatement("INSERT INTO photos VALUES (?,?,?,?)");
             psp.setInt(1, next_photo_id);
-            psp.setString(2, restaurant.getSinglePhotoPath());
+            psp.setString(2, restaurant.getSinglePhotoPath().replace("/home/gianma/NetBeansProjects/MealBoss/web/", ""));
             psp.setInt(3, next_id);
             psp.setInt(4, creator_id);
             
@@ -998,7 +1219,7 @@ public class DBManager implements Serializable {
             JSONObject tba_restaurant = new JSONObject();
             tba_restaurant.put("name", restaurant.getName());
             tba_restaurant.put("place", restaurant.getAddress()+" "+restaurant.getCivicNumber()+" "+restaurant.getCity());
-            tba_restaurant.put("photo", restaurant.getSinglePhotoPath());
+            tba_restaurant.put("photo", restaurant.getSinglePhotoPath().replace("/home/gianma/NetBeansProjects/MealBoss/web/", ""));
             tba_restaurant.put("descr", restaurant.getDescription());
             JSONObject tba_coords = new JSONObject();
             tba_coords.put("lat", coordinates[0]);
@@ -1044,6 +1265,20 @@ public class DBManager implements Serializable {
         return (update != 0);
     }
     
+    private ArrayList<Coords> getAllCoords() throws SQLException{
+        ArrayList <Coords> coords = new ArrayList<>();
+        String query = "SELECT * FROM coordinates";
+        PreparedStatement ps = con.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+        while(rs.next()){
+            Coords tmp = new Coords();
+            tmp.setLat((float)rs.getDouble("latitude"));
+            tmp.setLng((float)rs.getDouble("longitude"));
+            coords.add(tmp);
+        }
+        return coords;
+    }
+    
     /**
      *
      * @param address of the restaurant
@@ -1053,36 +1288,44 @@ public class DBManager implements Serializable {
      * @throws java.io.IOException
      * @throws org.json.simple.parser.ParseException
      */
-    public float[] getCoordinates(String address, int civic, String city) throws IOException, ParseException{
-        String url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-        String apikey = "&key=AIzaSyDORr3b9qWZfsw4Scy6BFUpkk1EXgw_DJw";
-        float [] coordinates = new float [2];
-        String fulladdress = address+" "+civic+" "+city;
-        
-        URL url = new URL(url1 + URLEncoder.encode(fulladdress, "UTF-8") + apikey + "&sensor=false");
-        URLConnection conn = url.openConnection();
-        
-        ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
-        IOUtils.copy(conn.getInputStream(), output);
-        
-        String json = output.toString();
-        
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(json);
-        JSONObject root = (JSONObject) obj;
-        
-        JSONArray results = (JSONArray) root.get("results");
-        JSONObject obj1 = (JSONObject) results.get(0);
-        JSONObject geometry = (JSONObject) obj1.get("geometry");
-        JSONObject location = (JSONObject) geometry.get("location");
-        
-        Double latitude = (double) location.get("lat");
-        Double longitude = (double) location.get("lng");
-        
-        coordinates[0] = latitude.floatValue();
-        coordinates[1] = longitude.floatValue();
-        
-        return coordinates;
+    private float[] getCoordinates(String address, int civic, String city) throws ParseException, IOException{
+        try {
+            String url1 = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+            String apikey = "&key=AIzaSyDORr3b9qWZfsw4Scy6BFUpkk1EXgw_DJw";
+            float [] coordinates = new float [2];
+            String fulladdress = address+" "+civic+" "+city;
+            
+            URL url = new URL(url1 + URLEncoder.encode(fulladdress, "UTF-8") + apikey + "&sensor=false");
+            URLConnection conn = url.openConnection();
+            
+            ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
+            IOUtils.copy(conn.getInputStream(), output);
+            
+            String json = output.toString();
+            
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(json);
+            JSONObject root = (JSONObject) obj;
+            
+            JSONArray results = (JSONArray) root.get("results");
+            JSONObject obj1 = (JSONObject) results.get(0);
+            JSONObject geometry = (JSONObject) obj1.get("geometry");
+            JSONObject location = (JSONObject) geometry.get("location");
+            
+            Double latitude = (double) location.get("lat");
+            Double longitude = (double) location.get("lng");
+            
+            coordinates[0] = latitude.floatValue();
+            coordinates[1] = longitude.floatValue();
+            
+            return coordinates;
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(DBManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        float [] coords = new float [2];
+        coords[0] = 0;
+        coords[1] = 0;
+        return coords;
     }
     
 }
