@@ -39,8 +39,6 @@ public class ShowResults extends HttpServlet {
         
         //setto il printwriter per stampare fuori la pagina
         PrintWriter out = response.getWriter();
-        //dico che la pagina è text html
-        response.setContentType("text/html");
         //prendo il campo cercato
         String target = request.getParameter("search_bar");
         String searchByNames = request.getParameter("search_names");
@@ -68,21 +66,19 @@ public class ShowResults extends HttpServlet {
             //qua c'è la tabella centrata con l' elenco dei risto
             out.println("<div class=\"col-md-2\"></div><div class=\"col-md-8\">"
                     + "<div class=\"container-fluid\"><form action=\"Profile\" method=\"POST\">"
-                    + "<table id=\"res_tab\">");
+                    + "<table id=\"res-tab\">");
             if(!searched_res.isEmpty()){
                 
                 for(int i = 0; i<searched_res.size();i++){ 
                         String newName = searched_res.get(i).getName();
                         String tmp = newName.replaceAll("\\s+","_");
-                        out.println("<tr>"
-                                + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getSinglePhotoPath()+"\" id=\"results-img\"></td>");
+                        out.println("<tr id=\"res-row\">"
+                                + "<td><img src=\""+request.getContextPath()+"/"+searched_res.get(i).getPhotoPath()[0]+"\" id=\"results-img\"></td>");
                         out.println("<td><ul><h1><a href=\""+request.getContextPath()+"/Profile?name="+tmp+"\" id=\"res_name\">"+searched_res.get(i).getName()+" </a></h1></ul>");
                         
                         String address = searched_res.get(i).getAddress()+" "+searched_res.get(i).getCivicNumber()+" "+searched_res.get(i).getCity();
                         out.println("<ul><a href=\"https://www.google.it/maps/?q="+URLEncoder.encode(address, "utf-8")+"\" target=\"_blank\">"+searched_res.get(i).getAddress()+", "+searched_res.get(i).getCivicNumber()
                                 + ", "+searched_res.get(i).getCity()+"</a></ul>");
-                        
-                        out.println("<ul> "+searched_res.get(i).getDescription()+" </ul>");
                         
                         out.println("<ul>");
                         String [] cuisineTypes = searched_res.get(i).getCuisineTypes();

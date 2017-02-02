@@ -25,7 +25,7 @@ public class Restaurant implements Serializable{
     private String[] cuisineTypes;
     private WeekSchedule week;
     private int price;
-    private String[] photoPath;
+    private String[] photoPath = null;
     private int id_owner;
     
     

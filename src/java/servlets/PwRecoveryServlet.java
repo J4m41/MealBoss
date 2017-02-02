@@ -120,7 +120,7 @@ public class PwRecoveryServlet extends HttpServlet {
             }
             
             String sJWT = signedJWT.serialize();
-            String url = "http://localhost:8080/Eat_v2.1/pwchange_page.jsp?token="+ URLEncoder.encode(sJWT);
+            String url = "http://localhost:8080/MealBoss/pwchange_page.jsp?token="+ URLEncoder.encode(sJWT);
             System.out.println("url: "+url);
             
                 

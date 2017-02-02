@@ -54,7 +54,7 @@
             <div class="col-md-2 col-sm-1 col-xs-2">
                 <div id="mobile-nav"></div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 col-sm-4 col-xs-8">
                 <form action="showResults" type="post">
                     <div class="input-group" id="barra-ricerca">
                         <input type="text" id="search_bar" name="search_bar" class="form-control" placeholder="Search">
@@ -75,7 +75,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2"><a href="index.jsp"><img id="icon" src="<%=request.getContextPath()%>/media/images/MealBoss_icon.png" alt="icon"></a></div>
             
         </nav>
         

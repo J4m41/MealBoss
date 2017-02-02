@@ -52,6 +52,10 @@
         <servlet-class>servlets.UserProfile</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>QR</servlet-name>
+        <servlet-class>servlets.QR</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>AddRestaurant</servlet-name>
         <servlet-class>servlets.AddRestaurant</servlet-class>
         <init-param>
@@ -66,6 +70,10 @@
     <servlet>
         <servlet-name>PwChangeServlet</servlet-name>
         <servlet-class>servlets.PwChangeServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ClaimRestaurantServlet</servlet-name>
+        <servlet-class>servlets.ClaimRestaurantServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -114,6 +122,14 @@
     <servlet-mapping>
         <servlet-name>UserProfile</servlet-name>
         <url-pattern>/UserProfile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>QR</servlet-name>
+        <url-pattern>/QR</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClaimRestaurantServlet</servlet-name>
+        <url-pattern>/ClaimRestaurantServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

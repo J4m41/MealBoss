@@ -1,5 +1,5 @@
 {"cuisineTypes":["Italiana","Asiatica","Nord Americana","Africana","Caraibica","Sud Americana","Nord Europea","Mediterranea","Medio Orientale","Vegana","Fast Food","Pizzeria"],"restaurants":[{"name":"Bella Napoli","place":"Viale Verona 5 Trento","photo":"/MealBoss/media/images/food-pizza-restaurant-eating.jpg","descr": "Pizza napoletana di qualità con cottura a legna","coords":{"lng":11.120159,"lat":46.069419}},{"name":"Cinese Party","place":"Corso 3 Novembre 23 Trento","photo":"/MealBoss/media/images/home_restaurant.jpg","descr":"Cucina cinese cucinata da un vero chef cinese qualificato alla scuola più difficile di Pechino","coords":{"lng":11.118239,"lat":46.066576}},{"name":"Zushi","place":"Piazza Venezia 9 Trento","photo":"/MealBoss/media/images/menu-restaurant-vintage-table.jpg","descr":"Sushi e ALL YOU CAN EAT a pranzo e cena","coords":{"lng":11.123346,"lat":46.064834}},
-        {"name":"Rosa d'oro",
+        {"name":"Rosa D'oro",
             "place": "Piazza Santa Maria Maggiore 21 Trento",
             "photo": "/MealBoss/media/images/menu-restaurant-vintage-table.jpg",
             "descr":"Piatti trentini, pizza e dolci casarecci serviti in sale semplici con arredi di legno in stile bavarese.",
@@ -29,7 +29,7 @@
             }
         },
         {
-            "name": "Trattoria al mercato",
+            "name": "Trattoria Al Mercato",
             "place": "Piazza Garzetti Giambattista 15 Trento",
             "photo": "/MealBoss/media/images/restswag.jpeg",
             "descr": "Trattoria trentina con solo piatti tipici",

@@ -53,46 +53,74 @@ public class Profile extends HttpServlet {
         //prendo il nome del ristorante passato come parametro
         String tmp = request.getParameter("name");
         String restName = tmp.replaceAll("_", " ");
-        
         out.println("<html><head><title>"+restName+"</title>");
         request.getRequestDispatcher("header.jsp").include(request, response);
         Restaurant res_tmp = manager.getRestaurant(restName);
         System.out.println(request.getContextPath()+"/"+res_tmp.getSinglePhotoPath());
-        out.println("<div class=\"container-fluid\"><div class=\"jumbotron\" id=\"jumbo-res\" style=\"background-image: url(../"+request.getContextPath()+"/"+res_tmp.getSinglePhotoPath()+");\">");
-        //        + "<img src=\""+request.getContextPath()+"/"+res_tmp.getSinglePhotoPath()+"\">");
-        out.println("<h1 id=\"profile-res-title\">"+res_tmp.getName()+"</h1>");
-        if(request.getSession().getAttribute("user")!=null){
-            //puo settare il voto con le stelline solo se loggato
-            out.println("<div name=\"rating\" class=\"col-md-offset-8 acidjs-rating-stars\">"+
-                        "<form>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-0\" value=\"5\" /><label for=\"group-2-0\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-1\" value=\"4\" /><label for=\"group-2-1\"></label>"+
-                            "<input type=\"radio\" checked=\"checked\" name=\"group-2\" id=\"group-2-2\" value=\"3\" /><label for=\"group-2-2\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-3\" value=\"2\" /><label for=\"group-2-3\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-4\"  value=\"1\" /><label for=\"group-2-4\"></label>"+
-                        "</form></div>");
-            }else{
-                //vuol dire che non è loggato e non puo settare le stelline
-                out.println("<div name=\"rating\" class=\"col-md-offset-8 acidjs-rating-stars acidjs-rating-disabled\">"+
-                        "<form>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-0\" value=\"5\" /><label for=\"group-2-0\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-1\" value=\"4\" /><label for=\"group-2-1\"></label>"+
-                            "<input type=\"radio\"  name=\"group-2\" id=\"group-2-2\" value=\"3\" /><label for=\"group-2-2\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-3\" value=\"2\" /><label for=\"group-2-3\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-4\"  value=\"1\" /><label for=\"group-2-4\"></label>"+
-                        "</form></div>");
-            }
-
-        out.println("</div></div>");
+        out.println("<div class=\"col-md-1\"></div><div class=\"col-md-10\"><div class=\"container-fluid\"><div class=\"jumbotron\" id=\"jumbo-res\" style=\"background-image: url(../"+request.getContextPath()+"/"+res_tmp.getSinglePhotoPath()+");\">");
+        out.println("<h1 id=\"profile-res-title\">"+res_tmp.getName().replace('*', '\'')+"</h1>");
         
+        //stelline
+        int stars = (int) res_tmp.getGlobal_value();
+        out.println("<br><div name=\"rating\" class=\"acidjs-rating-stars acidjs-rating-disabled\">"+
+                    "<form>");
+        switch(stars){
+            case 1:
+                out.println("<input type=\"radio\" name=\"group-rest\" id=\"group-rest-0\" value=\"5\" /><label for=\"group-rest-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-1\" value=\"4\" /><label for=\"group-rest-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-2\" value=\"3\" /><label for=\"group-rest-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-3\" value=\"2\" /><label for=\"group-rest-3\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-rest\" id=\"group-rest-4\"  value=\"1\" /><label for=\"group-rest-4\"></label>");
+                break;
+            case 2:
+                out.println("<input type=\"radio\" name=\"group-rest\" id=\"group-rest-0\" value=\"5\" /><label for=\"group-rest-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-1\" value=\"4\" /><label for=\"group-rest-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-2\" value=\"3\" /><label for=\"group-rest-2\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-rest\" id=\"group-rest-3\" value=\"2\" /><label for=\"group-rest-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-4\"  value=\"1\" /><label for=\"group-rest-4\"></label>");
+                break;
+            case 3:
+                out.println("<input type=\"radio\" name=\"group-rest\" id=\"group-rest-0\" value=\"5\" /><label for=\"group-rest-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-1\" value=\"4\" /><label for=\"group-rest-1\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-rest\" id=\"group-rest-2\" value=\"3\" /><label for=\"group-rest-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-3\" value=\"2\" /><label for=\"group-rest-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-4\"  value=\"1\" /><label for=\"group-rest-4\"></label>");
+                break;
+            case 4:
+                out.println("<input type=\"radio\" name=\"group-rest\" id=\"group-rest-0\" value=\"5\" /><label for=\"group-rest-0\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-rest\" id=\"group-rest-1\" value=\"4\" /><label for=\"group-rest-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-2\" value=\"3\" /><label for=\"group-rest-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-3\" value=\"2\" /><label for=\"group-rest-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-4\"  value=\"1\" /><label for=\"group-rest-4\"></label>");
+                break;
+            case 5:
+                out.println("<input type=\"radio\" checked=\"true\" name=\"group-rest\" id=\"group-rest-0\" value=\"5\" /><label for=\"group-rest-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-1\" value=\"4\" /><label for=\"group-rest-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-2\" value=\"3\" /><label for=\"group-rest-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-3\" value=\"2\" /><label for=\"group-rest-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-rest\" id=\"group-rest-4\"  value=\"1\" /><label for=\"group-rest-4\"></label>");
+                break;
+        }
         
+        out.println("</form></div>");
         
-        //qui ci metto descrizione ristorante + stelline
+        out.println("<br><br><form target=\"_blank\" action=\"QR\" type=\"GET\"><input type=\"hidden\" name=\"address\" value=\""+res_tmp.getAddress()+"_"+res_tmp.getCivicNumber()
+                +"_"+res_tmp.getCity()+"\">"
+                + "<input type=\"hidden\" name=\"name\" value=\""+res_tmp.getName()+"\">"
+                + "<button type=\"submit\" class=\"btn btn-danger\">QRCode</button></form>");
+        
+        if(res_tmp.getId_owner() == 0 && request.getSession().getAttribute("user")!=null){
+            out.println("<form action=\"ClaimRestaurantServlet\" type=\"POST\">"
+                    + "<input type=\"hidden\" name=\"restid\" value=\""+res_tmp.getId()+"\">"
+                    + "<input type=\"hidden\" name=\"name\" value=\""+res_tmp.getName()+"\">"
+                    + "<button type=\"submit\" class=\"btn btn-danger\">Claim </button>"
+                    + "</form>");
+        }
+        out.println("</div></div></div><div class=\"col-md-1\"></div>");
+        
+        //Dati ristorante
         out.println("<div class=\"container\"><div class=col-md-2></div>");
-        
-        out.println("<div class=col-md-4>");
-
-        //qua descrizione
+        out.println("<div class=col-md-5>");
         out.println("<p>"+res_tmp.getDescription()+"</p>"
         +"<br><h3>Oradi di apertura:</h3>");
         if(res_tmp.getWeek().isMonday()){
@@ -134,18 +162,18 @@ public class Profile extends HttpServlet {
         
         out.println("<br><h3>Prices:</h3>");
         if(res_tmp.getPrice() == 1){
-            out.println("<p>Low(<10&euro;)</p>");
+            out.println("<p>Low (<10&euro;)</p>");
         }else if(res_tmp.getPrice() == 2){
-            out.println("<p>Medium(~20&euro;)</p>");
+            out.println("<p>Medium (~20&euro;)</p>");
         }else if(res_tmp.getPrice() == 3){
-            out.println("<p>Low(>30&euro;)</p>");
+            out.println("<p>High (>30&euro;)</p>");
         }
         
         out.println("<br><h3>Where are we:<br></h3>");
         String address = res_tmp.getAddress()+" "+res_tmp.getCivicNumber()+" "+res_tmp.getCity();
         out.println("<p><a href=\"https://www.google.it/maps/?q="+URLEncoder.encode(address, "utf-8")+"\" target=\"_blank\">"
                 +res_tmp.getAddress()+", "+res_tmp.getCivicNumber()+", "+res_tmp.getCity()+ "</a></p>");
-        out.println("</div><div class=col-md-2></div></div>");   
+        out.println("</div><div class=col-md-1></div></div>");   
         
         out.println("<hr><div class=\"container\"><div class=\"col-md-2\"></div>"
                 + "<div class=\"col-md-8\">");
@@ -158,12 +186,12 @@ public class Profile extends HttpServlet {
                     //le stelline
                     +"<div name=\"rating\" class=\" acidjs-rating-stars\">"+
                         ""+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-0\" value=\"5\" /><label for=\"group-2-0\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-1\" value=\"4\" /><label for=\"group-2-1\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-2\" value=\"3\" /><label for=\"group-2-2\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-3\" value=\"2\" /><label for=\"group-2-3\"></label>"+
-                            "<input type=\"radio\" name=\"group-2\" id=\"group-2-4\"  value=\"1\" /><label for=\"group-2-4\"></label>"+
-                        "</div><br>"
+                            "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-0\" value=\"5\" /><label for=\"group-rev-0\"></label>"+
+                            "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-1\" value=\"4\" /><label for=\"group-rev-1\"></label>"+
+                            "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-2\" value=\"3\" /><label for=\"group-rev-2\"></label>"+
+                            "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-3\" value=\"2\" /><label for=\"group-rev-3\"></label>"+
+                            "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-4\"  value=\"1\" /><label for=\"group-rev-4\"></label>"+
+                        "</div><br><br>"
                     
                     + "Title: <input type=\"text\" id=\"title\" class=\"form-control\" name=\"title\"/><br>"
                     + "Description: <textarea class=\"form-control\" rows=\"4\" cols=\"50\" type=\"text\" name=\"description\"></textarea><br>"
@@ -187,18 +215,60 @@ public class Profile extends HttpServlet {
         //elenco review per ristoranti
         ArrayList<Review> reviews = manager.getReviewPerRestaurant(restName);
 
-        out.println("<div class=\"col-md-2\"></div><div class=\"col-md-8\">");
+        out.println("<div class=\"container\"><div class=\"col-md-2\"></div><div class=\"col-md-8\">");
         
         for(int i = 0; i < reviews.size(); i++){
-            out.println("<hr><h4>"+reviews.get(i).getTitle()+"</h4><br>");
-            out.println(reviews.get(i).getDescription());
-            out.println("<br>Rating: "+reviews.get(i).getRating());
-            out.println("<br>Review by: "+reviews.get(i).getUser());
-            out.println("<br>Do you like this review?"
-                    + "<a href=\"ValuateReview?value=1&revId="+reviews.get(i).getId()+"\">Yes</a>"
-                    + "<a href=\"ValuateReview?value=0&revId="+reviews.get(i).getId()+"\">No</a>");
+            int reviewer_id = manager.getReviewrId(reviews.get(i).getId());
+            int review_rating = reviews.get(i).getRating();
+            String reviewer_name = manager.getName(reviewer_id);
+            out.println("<hr><h4>"+reviewer_name+" reviewed this restaurant:</h4>");
+            out.println("<div name=\"rating\" class=\"acidjs-rating-stars acidjs-rating-disabled\">"+
+                    "<form>");
+            switch (review_rating){
+                case 1:
+                    out.println("<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-0\" value=\"5\" /><label for=\"group-"+i+"-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-1\" value=\"4\" /><label for=\"group-"+i+"-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-2\" value=\"3\" /><label for=\"group-"+i+"-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-3\" value=\"2\" /><label for=\"group-"+i+"-3\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-"+i+"\" id=\"group-"+i+"-4\"  value=\"1\" /><label for=\"group-"+i+"-4\"></label>");
+                    break;
+                case 2:
+                    out.println("<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-0\" value=\"5\" /><label for=\"group-"+i+"-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-1\" value=\"4\" /><label for=\"group-"+i+"-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-2\" value=\"3\" /><label for=\"group-"+i+"-2\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-"+i+"\" id=\"group-"+i+"-3\" value=\"2\" /><label for=\"group-"+i+"-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-4\"  value=\"1\" /><label for=\"group-"+i+"-4\"></label>");
+                    break;
+                case 3:
+                    out.println("<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-0\" value=\"5\" /><label for=\"group-"+i+"-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-1\" value=\"4\" /><label for=\"group-"+i+"-1\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-"+i+"\" id=\"group-"+i+"-2\" value=\"3\" /><label for=\"group-"+i+"-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-3\" value=\"2\" /><label for=\"group-"+i+"-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-4\"  value=\"1\" /><label for=\"group-"+i+"-4\"></label>");
+                    break;
+                case 4:
+                    out.println("<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-0\" value=\"5\" /><label for=\"group-"+i+"-0\"></label>"+
+                    "<input type=\"radio\" checked=\"checked\" name=\"group-"+i+"\" id=\"group-"+i+"-1\" value=\"4\" /><label for=\"group-"+i+"-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-2\" value=\"3\" /><label for=\"group-"+i+"-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-3\" value=\"2\" /><label for=\"group-"+i+"-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-4\"  value=\"1\" /><label for=\"group-"+i+"-4\"></label>");
+                    break;
+                case 5:
+                    out.println("<input type=\"radio\" checked=\"checked\" name=\"group-"+i+"\" id=\"group-"+i+"-0\" value=\"5\" /><label for=\"group-"+i+"-0\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-1\" value=\"4\" /><label for=\"group-"+i+"-1\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-2\" value=\"3\" /><label for=\"group-"+i+"-2\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-3\" value=\"2\" /><label for=\"group-"+i+"-3\"></label>"+
+                    "<input type=\"radio\" name=\"group-"+i+"\" id=\"group-"+i+"-4\"  value=\"1\" /><label for=\"group-"+i+"-4\"></label>");
+                    break;
+            }
+            out.println("</form></div>");
+            out.println("<br><p><b>"+reviews.get(i).getTitle()+"</b></p>");
+            out.println("<p>"+reviews.get(i).getDescription()+"</p>");
+            
+            
+            
         }
-        out.println("</div><div class=\"col-md-2\"></div>");
+        out.println("</div><div class=\"col-md-2\"></div></div>");
         
         out.println("<script src=\"media/js/scripts.js\"></script>");
         

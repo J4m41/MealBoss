@@ -83,39 +83,58 @@ body{
     width: 100%;
     height: 350px;
     color: black;
+    font: bold 12px/30px italic;
     text-align: left;
-    text-indent: 50px;
+    padding-left: 10px;
     background-image: url(../images/home_restaurant.jpg);
 }
 
-table, tr{
-    border-spacing: 50px;
-    text-align: left;
-    padding: 50px;
+#searchby-btn{
+    max-width: 100px;
 }
 
+#icon{
+    height: 50px;
+    width: 50px;
+    background-color: white;
+    float: right;
+}
 
+#jumbo-res{
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 350px;
+    color: white;
+    font: bold 12px/30px italic;
+}
 
 #suggested-table{
-    border-spacing: 75px 10px;
+    border-spacing: 100px 10px;
     border-collapse: separate;
     text-align: left;
     vertical-align: top;
     border: 1px solid black;
+    max-width: 250px;
 }
 
 #sugg-data{
     vertical-align: text-top;
+    alignment-adjust: central;
 }
 
 #suggested-img{
-    width: 220px;
-    height: 130px;
+    width: 250px;
+    height: 170px;
 }
 
 #results-img{
-    width: 300px;
-    height: 175px;
+    width: 220px;
+    height: 170px;
+}
+
+#res-tab{
+    border-collapse: separate;
+    border-spacing: 0em 3em;
 }
 
 #map-div{

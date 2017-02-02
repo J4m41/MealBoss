@@ -214,6 +214,8 @@ public class DBManager implements Serializable {
                 tmp.setWebSiteUrl(rs.getString("web_site_url"));
                 //setto price range
                 tmp.setPrice(rs.getInt("price_range"));
+                //setto global value
+                tmp.setGlobal_value(rs.getDouble("global_value"));
                 //qua la query per prendere il tipo di cucina
                 PreparedStatement pst = con.prepareStatement("SELECT c.name "
                     + "FROM cuisines AS c INNER JOIN restaurant_cuisine AS rc "
@@ -348,7 +350,7 @@ public class DBManager implements Serializable {
             
             ps.setInt(1,next_id);
             ps.setString(2,title);
-            ps.setInt(3,3);
+            ps.setInt(3,rating);
             ps.setString(4,description);
 
             ps.setTimestamp(5, ora);
@@ -533,6 +535,24 @@ public class DBManager implements Serializable {
     
     /**
      *
+     * @param restaurant_id
+     * @param user_id
+     * @return
+     * @throws java.sql.SQLException
+     */
+    public int updateRestaurantOwner(int restaurant_id, int user_id) throws SQLException{
+        int update;
+        String query = "UPDATE restaurants SET id_owner = ? WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, user_id);
+        ps.setInt(2, restaurant_id);
+        
+        update = ps.executeUpdate();
+        return update;
+    }
+    
+    /**
+     *
      * @param revId id of who the review
      * @return the id of the review creator
      * @throws SQLException
@@ -593,6 +613,17 @@ public class DBManager implements Serializable {
         if(rs.next())
             username = rs.getString(1);
         return username;
+    }
+    
+    public String getName(int id) throws SQLException{
+        String fullname = null;
+        String query = "SELECT firstname, lastname FROM users WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next())
+            fullname = rs.getString("firstname")+" "+rs.getString("lastname");
+        return fullname;
     }
 
     /**

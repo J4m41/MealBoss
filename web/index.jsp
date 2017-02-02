@@ -54,13 +54,13 @@
             <div class="col-md-2 col-sm-1 col-xs-2">
                 <div id="mobile-nav"></div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 col-sm-4 col-xs-8">
                 <form action="ShowResults" type="post">
                     <div class="input-group" id="barra-ricerca">
                         <input type="text" id="search_bar" name="search_bar" class="form-control" placeholder="Search">
 
                         <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                            <button type="button" id="searchby-btn" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true" aria-expanded="false">Search by <span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li><a><input type="checkbox" checked="true" id="search_names" name="search_names" value="true"> Names</a></li>
@@ -77,12 +77,11 @@
                     </div>
                 </form>
             </div>
-            <div class="col-md-2"></div>
+            <div class="col-md-2"><a href="index.jsp"><img id="icon" src="<%=request.getContextPath()%>/media/images/MealBoss_icon.png" alt="icon"></a></div>
             
         </nav>
 
         <div class="jumbotron" id="home-jumbo">
-            <br>
             <br>
             <h1>Trova qui i migliori ristoranti</h1>
             <p>Cerca una città, un ristorante o una tipologia di cucina</p>

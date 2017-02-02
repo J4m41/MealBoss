@@ -9,7 +9,6 @@ import db_classes.DBManager;
 import db_classes.User;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -19,10 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author leonardo
+ * @author gianma
  */
-public class AddComment extends HttpServlet {
-
+public class ClaimRestaurantServlet extends HttpServlet {
     
     private DBManager manager;
     
@@ -31,6 +29,7 @@ public class AddComment extends HttpServlet {
         // inizializza il DBManager dagli attributi di Application
         this.manager = (DBManager)super.getServletContext().getAttribute("dbmanager");
     }
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,54 +43,62 @@ public class AddComment extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         
-        User user = (User) request.getSession().getAttribute("user");
-        String title = request.getParameter("title");
-        String description = request.getParameter("description");
-        String image = request.getParameter("image");
-        Calendar calendar = Calendar.getInstance();
-        int rating = Integer.parseInt(request.getParameter("group-rev"));
-       
-        java.util.Date now = calendar.getTime();
-        java.sql.Timestamp ora = new java.sql.Timestamp(now.getTime());
-
-        String restName =  (String) request.getSession().getAttribute("RestName");
-        int restaurantId = manager.getRestaurantId(restName);
-        int restaurantOwner = manager.getOwnerId(restaurantId);
-        int idReview = this.manager.addReviewPerRestaurant(user.getId(), restaurantId, rating, ora, title, description, 0);
-        //se non c'è l' immagine mando notifica senza immagine
-        if(image.equals("")){
-            try{
-               
-            manager.notifyUser(user.getId(), restaurantOwner,idReview , 0);
-            }catch(SQLException e){
-                System.out.println(e.toString());
-            }
-        }else{
+        int restaurantId = Integer.parseInt(request.getParameter("restid"));
+        String restName = request.getParameter("name");
+        User user = (User)request.getSession().getAttribute("user");
+        int userId = user.getId();
         
-        }
+        manager.updateRestaurantOwner(restaurantId, userId);
         
         response.sendRedirect("Profile?name="+restName);
-
+        
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (SQLException ex) {
-            Logger.getLogger(Profile.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(Profile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClaimRestaurantServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            processRequest(request, response);
+        } catch (SQLException ex) {
+            Logger.getLogger(ClaimRestaurantServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
 }
