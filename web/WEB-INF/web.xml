@@ -40,6 +40,10 @@
         <servlet-class>servlets.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>MyRestaurants</servlet-name>
+        <servlet-class>servlets.MyRestaurants</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>ValuateReview</servlet-name>
         <servlet-class>servlets.ValuateReview</servlet-class>
     </servlet>
@@ -54,6 +58,14 @@
     <servlet>
         <servlet-name>QR</servlet-name>
         <servlet-class>servlets.QR</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ReplyToReview</servlet-name>
+        <servlet-class>servlets.ReplyToReview</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SegnalaFoto</servlet-name>
+        <servlet-class>servlets.SegnalaFoto</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AddRestaurant</servlet-name>
@@ -79,6 +91,18 @@
         <servlet-name>ClaimRestaurantServlet</servlet-name>
         <servlet-class>servlets.ClaimRestaurantServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PhotoReviewServlet</servlet-name>
+        <servlet-class>servlets.PhotoReviewServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ReplyPhotoToReview</servlet-name>
+        <servlet-class>servlets.ReplyPhotoToReview</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MyRestaurants</servlet-name>
+        <url-pattern>/MyRestaurants</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -132,8 +156,24 @@
         <url-pattern>/QR</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>SegnalaFoto</servlet-name>
+        <url-pattern>/SegnalaFoto</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReplyToReview</servlet-name>
+        <url-pattern>/ReplyToReview</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ClaimRestaurantServlet</servlet-name>
         <url-pattern>/ClaimRestaurantServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PhotoReviewServlet</servlet-name>
+        <url-pattern>/PhotoReviewServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ReplyPhotoToReview</servlet-name>
+        <url-pattern>/ReplyPhotoToReview</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

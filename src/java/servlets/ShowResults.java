@@ -97,8 +97,14 @@ public class ShowResults extends HttpServlet {
             }
             
             out.println("</table></form></div></div><div class=\"col-md-2\"></div>"
-                    +"<script src=\"media/js/scripts.js\"></script>"
-                    + "</body></html>");
+                    +"<script src=\"media/js/scripts.js\"></script>");
+            out.println("<div class=\"col-md-1 col-sm-1 col-xs-0\"></div>\n" +
+"            <div class=\"col-md-10\">  \n" +
+"                <hr>\n" +
+"                <p id=\"footer\">@2016-2017 Programmazione per il Web | 404 Group Not Found</p>\n" +
+"            </div>\n" +
+"            <div class=\"col-md-1 col-sm-1 col-xs-0\"></div>");
+            out.println("</body></html>");
         } catch (SQLException ex) {
             Logger.getLogger(ShowResults.class.getName()).log(Level.SEVERE, null, ex);
         }

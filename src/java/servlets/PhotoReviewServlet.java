@@ -6,10 +6,9 @@
 package servlets;
 
 import db_classes.DBManager;
-import db_classes.User;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -19,9 +18,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author leonardo
+ * @author gianma
  */
-public class ReplyToReview extends HttpServlet {
+public class PhotoReviewServlet extends HttpServlet {
     
     private DBManager manager;
     
@@ -30,6 +29,7 @@ public class ReplyToReview extends HttpServlet {
         // inizializza il DBManager dagli attributi di Application
         this.manager = (DBManager)super.getServletContext().getAttribute("dbmanager");
     }
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,29 +38,33 @@ public class ReplyToReview extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        
-        Calendar calendar = Calendar.getInstance();
-        java.util.Date now = calendar.getTime();
-        java.sql.Timestamp ora = new java.sql.Timestamp(now.getTime());
-        
-        User user = (User) request.getSession().getAttribute("user");
-        int userId = user.getId();
-        
-        int idNotifica = (int) request.getSession().getAttribute("idNotifica");
-        request.getSession().removeAttribute("idNotifica");
-        
-        String reply = request.getParameter("reply");
-        manager.replyToReview(idNotifica, reply, ora, userId);
-        
-        int id_review = manager.getReviewId(idNotifica);
-        int reviewr_id = manager.getReviewrId(id_review);
-        manager.removeNotification(idNotifica);
-        
-        manager.notifyUser(userId, reviewr_id, id_review, 3);
-        response.sendRedirect("UserProfile");
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            int notificationId = Integer.parseInt(request.getParameter("id"));
+            out.println("<html><head>");
+            request.getRequestDispatcher("header.jsp").include(request, response);
+            
+            out.println("<div class=\"row\"><div class=\"col-md-4 col-md-offset-3\"><br><br><br><form action=\"ReplyPhotoToReview\" method=\"post\">");
+            
+            String path = manager.getPathFromNotification(notificationId);
+            
+            out.println("<img id=\"photo-segnala\" src=\""+request.getContextPath()+"/"+path+"\"><br>"
+                    + "<br><p>Vuoi tenere la foto?"
+                    + "<input type=\"hidden\" name=\"notification-id\" value=\""+notificationId+"\"></input>"
+                    + "<br><input type=\"radio\" name=\"keep-photo\" value=\"yes\">Yes</input>"
+                    + "<br><input type=\"radio\" name=\"keep-photo\" value=\"no\">No</input><br>"
+                    + "<br><label for=\"reply\">Leave a reply:</label>"
+                    + "<input class=\"form-control\" type=\"text\" name=\"reply\" id=\"reply\"/><br>"
+                    + "<button class=\"btn btn-submit\">Reply</button>");
+            
+            out.println("</form></div></div>");
+            out.println("</body></html>");
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -78,7 +82,7 @@ public class ReplyToReview extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(ReplyToReview.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PhotoReviewServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -96,7 +100,7 @@ public class ReplyToReview extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(ReplyToReview.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PhotoReviewServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

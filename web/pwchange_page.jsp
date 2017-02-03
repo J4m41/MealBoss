@@ -72,7 +72,7 @@
                     <li><p> Welcome back <c:out value="${sessionScope.user.firstname}"></c:out><p></li>
                     <li><a href="index.jsp">Home</a></li>
                     <li><a href="UserProfile">My profile</a></li>
-                    <li><a href="#">My restaurants</a></li>
+                    <li><a href="MyRestaurants">My restaurants</a></li>
                     <li><a href="addRestaurant_page.jsp">Add restaurant</a></li>
                     <li><a href="about_page.jsp">About</a></li>
                     <li><a href="<%=request.getContextPath()%>/LogoutServlet">Logout</a></li>

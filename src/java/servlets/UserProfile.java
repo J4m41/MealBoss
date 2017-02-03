@@ -51,47 +51,44 @@ public class UserProfile extends HttpServlet {
         out.println("<html><head><title>"+user.getUsername()+"</title>");
         request.getRequestDispatcher("header.jsp").include(request, response);
         
-        out.println("<div class=\"jumbotron\" id=\"jumbo-res\" >");
+        out.println("<div class=\"jumbotron\" id=\"jumbo-profile\" >");
         out.println("<h1 id=\"profile-res-title\">"+user.getFirstname()+" "+user.getLastname()+"</h1></div>");
         out.println("<div class=\"row\">");
             //qua vanno gli stat utente
             out.println("<div class=\"col-md-4 col-md-offset-2\">"
                     + "<h3>Username: </h3>"+user.getUsername()
                     + "<h3>eMail: </h3>"+user.getUsername()
+                    + "<br><br><p><a href=\"pwchange_page.jsp\">Modifica password</a></p>"
                     + "</div>");
             //qua vanno le notifiche utente
             ArrayList<Notification> notifiche = new ArrayList<>();
             notifiche = manager.getNotificationPerUser(user.getId());
-            out.println("<div class=\"col-md-4 col-md-offset-6\"><h3>Notifications</h3>");
+            out.println("<div class=\"col-md-4\"><h3>Notifications</h3>");
             for(int i = 0;i<notifiche.size();i++){
-                String tipoNotifica = null;
-                if(notifiche.get(i).getType()==0){
-                    tipoNotifica = "commento semplice";
-                }
-                if(notifiche.get(i).getType()==1){
-                    tipoNotifica = "commento con foto";
-                }if(notifiche.get(i).getType()==2){
-                    tipoNotifica = "una segnalazione alla foto";
-                }if(notifiche.get(i).getType()==3){
-                    tipoNotifica = "una risposta alla recensione";
-                }if(notifiche.get(i).getType()==4){
-                    tipoNotifica = "like al tuo commento";
-                }
-                out.println("<hr><div>"
-                        + manager.getUsernameFromId(notifiche.get(i).getNotifier_id())
-                        + notifiche.get(i).getDescription()
-                        + "<br>");
-                System.out.println("tipo di notifica "+notifiche.get(i).getType());
+                
+                out.println("<hr><div><p>"
+                        + manager.getName(notifiche.get(i).getNotifier_id())
+                        +" "+ notifiche.get(i).getDescription()
+                        + "</p>");
                 if(notifiche.get(i).getType()==1){ //aka si tratta di commento con foto e puo essere segnalata
-                    out.println("Segnala foto della review id: <a href=\"photo_segnalation.jsp?id="+notifiche.get(i).getId()+"\">"+notifiche.get(i).getId()+"</a>");
+                    out.println("<a href=\"PhotoReviewServlet?id="+notifiche.get(i).getId()+"\">Segnala foto e rispondi alla recensione</a>");
+                }
+                else if(notifiche.get(i).getType() ==0){
+                    out.println("<a href=\"ValidateNotification?id="+notifiche.get(i).getId()+"&type="+notifiche.get(i).getType()+"\">Rispondi alla recensione</a>");
                 }
                 else{
-                    out.println("ID review = <a href=\"ValidateNotification?id="+notifiche.get(i).getId()+"&type="+notifiche.get(i).getType()+"\">"+notifiche.get(i).getId()+"</a>");
+                    out.println("<a href=\"ValidateNotification?id="+notifiche.get(i).getId()+"&type="+notifiche.get(i).getType()+"\">Segna come letta</a>");
                 }
                 out.println("</div>");
             }
             out.println("</div>");
         out.println("</div>");
+        out.println("<div class=\"col-md-1 col-sm-1 col-xs-0\"></div>\n" +
+"            <div class=\"col-md-10\">  \n" +
+"                <hr>\n" +
+"                <p id=\"footer\">@2016-2017 Programmazione per il Web | 404 Group Not Found</p>\n" +
+"            </div>\n" +
+"            <div class=\"col-md-1 col-sm-1 col-xs-0\"></div>");
         out.println("<script src=\"media/js/scripts.js\"></script>");
         out.println("</body></html>");
 

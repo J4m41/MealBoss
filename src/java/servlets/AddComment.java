@@ -60,7 +60,7 @@ public class AddComment extends HttpServlet {
         String title = null;
         String description = null;
         Calendar calendar = Calendar.getInstance();
-        int rating = 0;
+        
 
         
         String restName = (String)request.getSession().getAttribute("RestName");
@@ -72,7 +72,7 @@ public class AddComment extends HttpServlet {
         try{
             MultipartRequest multi = new MultipartRequest(request, dirName, 10*1024*1024,
                         "ISO-8859-1", new DefaultFileRenamePolicy());
-
+            int rating = 0;
             title = multi.getParameter("title");
             description = multi.getParameter("description");
             rating = Integer.parseInt(multi.getParameter("group-rev"));
@@ -81,8 +81,7 @@ public class AddComment extends HttpServlet {
             while(files.hasMoreElements()){
                 String name = (String)files.nextElement();
                 File f = multi.getFile(name);
-
-                if(name.equals("image") && f.exists()){
+                if(f !=  null && name.equals("image") && f.exists()){
                     photoPath = f.toString();
                 }
             }

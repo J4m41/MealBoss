@@ -24,7 +24,6 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.logging.Level;
-import listeners.EatItHereAppListener;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -47,15 +46,14 @@ public class DBManager implements Serializable {
         
         Connection con = DriverManager.getConnection(dburl, dbuser, dbpassword);
         this.con = con;
-        
+        /*
         try {
             ArrayList <Restaurant> allRestaurants = getAllRestaurants();
-            ArrayList <Coords> coordinates = getAllCoords();
             JSONParser parser = new JSONParser();
             //Reading suggestions.json and gettin restaurants array
             JSONObject json = (JSONObject) parser.parse(new FileReader("/home/gianma/NetBeansProjects/MealBoss/web/media/js/suggestions.json"));
             JSONArray restaurants = (JSONArray) json.get("restaurants");
-            
+            Coords tmp;
             for(int i = 0; i < allRestaurants.size(); i++){
                 JSONObject tba_restaurant = new JSONObject();
                 tba_restaurant.put("name", allRestaurants.get(i).getName());
@@ -63,8 +61,9 @@ public class DBManager implements Serializable {
                 tba_restaurant.put("photo", allRestaurants.get(i).getSinglePhotoPath().replace("/home/gianma/NetBeansProjects/MealBoss/web/", ""));
                 tba_restaurant.put("descr", allRestaurants.get(i).getDescription());
                 JSONObject tba_coords = new JSONObject();
-                tba_coords.put("lat", coordinates.get(i).getLat());
-                tba_coords.put("lng", coordinates.get(i).getLng());
+                tmp = allRestaurants.get(i).getCoordinates();
+                tba_coords.put("lat", tmp.getLat());
+                tba_coords.put("lng", tmp.getLng());
                 tba_restaurant.put("coords", tba_coords);
 
                 restaurants.add(tba_restaurant);
@@ -75,8 +74,9 @@ public class DBManager implements Serializable {
             file.close();
             
         } catch (IOException | ParseException ex) {
-            Logger.getLogger(EatItHereAppListener.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.toString());
         }
+        */
     }
     
     public static void shutdown(){
@@ -405,6 +405,45 @@ public class DBManager implements Serializable {
     
     /**
      *
+     * @param notification_id
+     * @return
+     * @throws SQLException
+     */
+    public int getReviewId(int notification_id) throws SQLException{
+        int rev_id = 0;
+        String query = "SELECT id_review FROM notifications WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, notification_id);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            rev_id = rs.getInt(1);
+        }
+        return rev_id;
+        
+    }
+    
+    /**
+     *
+     * @param notification_id
+     * @return
+     * @throws SQLException
+     */
+    public String getPathFromNotification(int notification_id) throws SQLException{
+        String path = null;
+        
+        String query = "SELECT p.path FROM notifications AS n INNER JOIN photos AS p ON n.id_photo = p.id "
+                + "WHERE n.id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, notification_id);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next()){
+            path = rs.getString(1);
+        }
+        return path;
+    }
+    
+    /**
+     *
      * @param path
      * @param restaurantId
      * @param creatorId
@@ -452,13 +491,24 @@ public class DBManager implements Serializable {
         return null;
     }
     
-        public void validateNotification(int id) throws SQLException{
+    /**
+     *
+     * @param id
+     * @throws SQLException
+     */
+    public void validateNotification(int id) throws SQLException{
         String query = "UPDATE notifications SET validated = true WHERE id= ?";
         PreparedStatement ps = con.prepareStatement(query);
         ps.setInt(1, id);
         int rs = ps.executeUpdate();
         System.out.println("Righe affette: "+rs);
     }
+    
+    /**
+     *
+     * @param id
+     * @throws SQLException
+     */
     public void removeReview(int id) throws SQLException{
         String query = "DELETE FROM reviews WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(query);
@@ -471,6 +521,12 @@ public class DBManager implements Serializable {
         }
         System.out.println("righe affette review: "+rs+" id : "+id);
     }
+
+    /**
+     *
+     * @param id
+     * @throws SQLException
+     */
     public void removeNotification(int id) throws SQLException{
         String query = "DELETE FROM notifications WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(query);
@@ -481,17 +537,16 @@ public class DBManager implements Serializable {
     }
     public void getReviewFromNotification(int notificationId) throws SQLException{
         int reviewId = 2;
-        System.out.println("id a questo punto: "+notificationId);
         String query = "SELECT id_review FROM notifications WHERE id = ?";
         PreparedStatement ps = con.prepareStatement(query);
         ps.setInt(1, notificationId);
         ResultSet rs = ps.executeQuery();
         if(rs.next()){
             reviewId = rs.getInt(1);
-            System.out.println("idddd: "+reviewId);
         }
         removeNotification(notificationId);
         removeReview(reviewId);
+        //remove photo
     }
     
     public void replyToReview(int notificationId,String reply,Timestamp ora,int userId) throws SQLException{
@@ -521,6 +576,8 @@ public class DBManager implements Serializable {
         pss.setTimestamp(3, ora);
         pss.setInt(4, reviewId);
         pss.setInt(5, userId);
+        
+        int update = pss.executeUpdate();
         
     }
 
@@ -629,11 +686,11 @@ public class DBManager implements Serializable {
 
         switch(type){
                 case 0 :    //Recensione
-                    ps.setString(5, "a user reviewed your restaurant, id review: "+idReview);
+                    ps.setString(5, "reviewed your restaurant");
                     ps.setInt(7, 0);
                     break;
                 case 1:     //Recensione + foto
-                    ps.setString(5, "a user reviewed your restaurant with a photo, id review: "+idReview);
+                    ps.setString(5, "reviewed your restaurant with a photo");
                     String queryPhoto = "SELECT id_photo FROM reviews WHERE id = ?";
                     PreparedStatement pss = con.prepareStatement(queryPhoto);
                     pss.setInt(1, idReview);
@@ -643,7 +700,7 @@ public class DBManager implements Serializable {
                     }
                     break;
                 case 2:     //segnalazione foto
-                    ps.setString(5, "a restaurant's owner disliker you photo, id review: "+idReview);
+                    ps.setString(5, "(restaurant owner) removed your photo");
                     String queryPhoto1 = "SELECT id_photo FROM reviews WHERE id = ?";
                     PreparedStatement pss1 = con.prepareStatement(queryPhoto1);
                     pss1.setInt(1, idReview);
@@ -653,7 +710,7 @@ public class DBManager implements Serializable {
                     }
                     break;
                 case 3:     //Risposta a recensione
-                    ps.setString(5, "a restourant's owner replied to your review n°: "+idReview);
+                    ps.setString(5, "(restaurant owner) replied to your review");
                     ps.setInt(7, 0);
                     break;
                 case 4:     //like a recensione
@@ -942,6 +999,16 @@ public class DBManager implements Serializable {
                 cuisines.add(rs2.getString("name"));
             }
             
+            Coords coords = new Coords();
+            PreparedStatement ps4 = con.prepareStatement("SELECT * FROM coordinates WHERE id_restaurant=?");
+            ps4.setInt(1, rs1.getInt("id"));
+            ResultSet rs4 = ps4.executeQuery();
+            if(rs4.next()){
+                coords.setLat((float)rs4.getDouble("latitude"));
+                coords.setLng((float)rs4.getDouble("longitude"));
+                restaurant.setCoordinates(coords);
+            }
+            
             String [] restaurantCuisines = new String[cuisines.size()];
             for(int h = 0; h < cuisines.size(); h++){
                 restaurantCuisines[h] = cuisines.get(h);
@@ -951,6 +1018,7 @@ public class DBManager implements Serializable {
             
             //The data collected is enough since user can search by names, places and cuisines
             //Need to add also photo paths for the results
+
             PreparedStatement ps3 = con.prepareStatement("SELECT path FROM photos WHERE id_restaurant = ?");
             ps3.setInt(1, rs1.getInt("id"));
             ResultSet rs3 = ps3.executeQuery();
@@ -1326,6 +1394,73 @@ public class DBManager implements Serializable {
         coords[0] = 0;
         coords[1] = 0;
         return coords;
+    }
+    
+    /**
+     *
+     * @param userId
+     * @return
+     * @throws SQLException
+     */
+    public ArrayList<Restaurant> getRestaurantsByUserId(int userId) throws SQLException{
+        ArrayList<Restaurant> ristoranti = new ArrayList<>();
+
+        String query = "SELECT * FROM restaurants WHERE id_owner = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, userId);
+        ResultSet rs = ps.executeQuery();
+        
+        while(rs.next()){
+            Restaurant tmp = new Restaurant();
+            tmp.setId(rs.getInt(1));
+            tmp.setName(rs.getString(2));
+            tmp.setAddress(rs.getString(3));
+            tmp.setCivicNumber(rs.getInt(4));
+            tmp.setCity(rs.getString(5));
+            tmp.setDescription(rs.getString(6));
+            tmp.setWebSiteUrl(rs.getString(7));
+            tmp.setGlobal_value(rs.getInt(8));
+            tmp.setPrice(rs.getInt(9));
+
+            String queryPhoto = "SELECT path FROM photos WHERE id_restaurant = ?";
+            PreparedStatement pss = con.prepareStatement(queryPhoto);
+            pss.setInt(1, tmp.getId());
+            ResultSet rss = pss.executeQuery();
+
+            if(rss.next())
+                tmp.setSinglePhotoPath(rss.getString(1));
+            
+            //Restaurant cuisines
+            PreparedStatement ps2 = con.prepareStatement("SELECT c.name "
+                    + "FROM cuisines AS c INNER JOIN restaurant_cuisine AS rc "
+                    + "ON c.id = rc.id_cuisine WHERE rc.id_restaurant = ?");
+            ps2.setInt(1, tmp.getId());
+            ResultSet rs2 = ps2.executeQuery();
+            ArrayList <String> cuisines = new ArrayList<>();
+            while(rs2.next()){
+                cuisines.add(rs2.getString("name"));
+            }
+            
+            String [] restaurantCuisines = new String[cuisines.size()];
+            for(int h = 0; h < cuisines.size(); h++){
+                restaurantCuisines[h] = cuisines.get(h);
+            }
+            tmp.setCuisineTypes(restaurantCuisines);
+            
+
+            ristoranti.add(tmp);
+        }
+        ps.close();
+        rs.close();
+
+        return ristoranti;
+    }
+    
+    public void removePhoto(int revId) throws SQLException{
+        String query = "UPDATE reviews SET id_photo = 0 WHERE id = ?";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, revId);
+        int update = ps.executeUpdate();
     }
     
 }

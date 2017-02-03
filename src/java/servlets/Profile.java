@@ -120,6 +120,7 @@ public class Profile extends HttpServlet {
         //Dati ristorante
         out.println("<div class=\"container\"><div class=col-md-2></div>");
         out.println("<div class=col-md-5>");
+        out.println("<p><a href=\"#\">"+res_tmp.getWebSiteUrl()+"</a></p>");
         out.println("<p>"+res_tmp.getDescription()+"</p>"
         +"<br><h3>Oradi di apertura:</h3>");
         if(res_tmp.getWeek().isMonday()){
@@ -187,7 +188,7 @@ public class Profile extends HttpServlet {
                         ""+
                             "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-0\" value=\"5\" /><label for=\"group-rev-0\"></label>"+
                             "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-1\" value=\"4\" /><label for=\"group-rev-1\"></label>"+
-                            "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-2\" value=\"3\" /><label for=\"group-rev-2\"></label>"+
+                            "<input type=\"radio\" name=\"group-rev\" checked=\"checked\" id=\"group-rev-2\" value=\"3\" /><label for=\"group-rev-2\"></label>"+
                             "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-3\" value=\"2\" /><label for=\"group-rev-3\"></label>"+
                             "<input type=\"radio\" name=\"group-rev\" id=\"group-rev-4\"  value=\"1\" /><label for=\"group-rev-4\"></label>"+
                         "</div><br><br>"
@@ -225,7 +226,6 @@ public class Profile extends HttpServlet {
             if(photoId != 0){
                 String path = manager.getPhoto(photoId);
                 out.println("<div id=\"rev-img\"><img id=\"rev-img\" src=\""+request.getContextPath()+"/"+path+"\"></div>");
-                System.out.println(request.getContextPath()+"/"+path);
             }
             
             out.println("<div name=\"rating\" class=\"acidjs-rating-stars acidjs-rating-disabled\">"+

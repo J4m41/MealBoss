@@ -52,28 +52,30 @@ public class ValidateNotification extends HttpServlet {
         int userId = user.getId();
         
         int type = Integer.parseInt(request.getParameter("type"));
-        System.out.println("type: "+type);
+        
+        
+
         //se si tratta di un commento ad un ristorante posso rispondere al commento
         if(type == 0){
            
             out.println("<html><head><title>Reply</title>");
             request.getRequestDispatcher("header.jsp").include(request, response);
             
-            out.println("<div cloass=\"col-md-4 col-md-offset-22\">"
+            out.println("<br><br><br><div class=\"col-md-4 col-md-offset-3\">"
                     + "<form action=\"ReplyToReview\" method=\"POST\">"
-                    + "<label for=\"reply\">Leave a reply</label>"
-                    + "<input type=\"textarea\" name=\"reply\" id=\"reply\"/>"
-                    + "<button class=\"btn button\" type=\"submit\">"
+                    + "<label for=\"reply\">Leave a reply:</label>"
+                    + "<input class=\"form-control\" type=\"text\" name=\"reply\" id=\"reply\"/>"
+                    + "<br><button class=\"btn btn-submit\" type=\"submit\">Reply</button>"
                     + "</div>");
             
             out.println("</body></html>");
-        }
-        
-        try{
-            manager.validateNotification(id);
-        //    response.sendRedirect("UserProfile");
-        }catch(SQLException e){
-            System.out.println(e.toString());
+        }else{
+            try{
+                manager.removeNotification(id);
+            }catch(SQLException e){
+                System.out.println(e.toString());
+            }
+            response.sendRedirect("UserProfile");
         }
         
     }

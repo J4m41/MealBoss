@@ -27,6 +27,7 @@ public class Restaurant implements Serializable{
     private int price;
     private String[] photoPath = null;
     private int id_owner;
+    private Coords coordinates;
     
     
     
@@ -245,6 +246,20 @@ public class Restaurant implements Serializable{
      */
     public void setId_owner(int id_owner) {
         this.id_owner = id_owner;
+    }
+
+    /**
+     * @return the coordinates
+     */
+    public Coords getCoordinates() {
+        return coordinates;
+    }
+
+    /**
+     * @param coordinates the coordinates to set
+     */
+    public void setCoordinates(Coords coordinates) {
+        this.coordinates = coordinates;
     }
     
 }

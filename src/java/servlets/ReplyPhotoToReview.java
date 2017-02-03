@@ -6,9 +6,11 @@
 package servlets;
 
 import db_classes.DBManager;
+import db_classes.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -18,9 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author leonardo
+ * @author gianma
  */
-public class SegnalaFoto extends HttpServlet {
+public class ReplyPhotoToReview extends HttpServlet {
     
     private DBManager manager;
     
@@ -29,6 +31,8 @@ public class SegnalaFoto extends HttpServlet {
         // inizializza il DBManager dagli attributi di Application
         this.manager = (DBManager)super.getServletContext().getAttribute("dbmanager");
     }
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -37,17 +41,43 @@ public class SegnalaFoto extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
         
-        int id = Integer.parseInt((String) request.getSession().getAttribute("id"));
+        String keepPhoto = request.getParameter("keep-photo");
+        String reply = request.getParameter("reply");
+        User user = (User) request.getSession().getAttribute("user");
+        int userId = user.getId();
+        int notificationId = Integer.parseInt(request.getParameter("notification-id"));
+        if(keepPhoto.equals("yes")){
+            if(reply != null){
+                Calendar calendar = Calendar.getInstance();
+                java.util.Date now = calendar.getTime();
+                java.sql.Timestamp ora = new java.sql.Timestamp(now.getTime());
+                manager.replyToReview(notificationId, reply, ora, userId);
+                int revId = manager.getReviewId(notificationId);
+                int revrId = manager.getReviewrId(revId);
+                manager.notifyUser(userId, revrId, revId, 3);
+                manager.removeNotification(notificationId);
+            }
+        }else{
+            int revId = manager.getReviewId(notificationId);
+            if(reply != null){
+                Calendar calendar = Calendar.getInstance();
+                java.util.Date now = calendar.getTime();
+                java.sql.Timestamp ora = new java.sql.Timestamp(now.getTime());
+                manager.replyToReview(notificationId, reply, ora, userId);
+                int revrId = manager.getReviewrId(revId);
+                manager.notifyUser(userId, revrId, revId, 3);
+                manager.removeNotification(notificationId);
+            }
+            manager.removePhoto(revId);
+            
+        }
         
-        
-        manager.getReviewFromNotification(id);
-        request.getSession().removeAttribute("id");
         response.sendRedirect("UserProfile");
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -65,7 +95,7 @@ public class SegnalaFoto extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(SegnalaFoto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReplyPhotoToReview.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -83,7 +113,7 @@ public class SegnalaFoto extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(SegnalaFoto.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ReplyPhotoToReview.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
